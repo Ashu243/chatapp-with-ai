@@ -57,7 +57,7 @@ const RightPane = ({ aiMessages, aiTyping }) => {
                                 },
                             }}
                         >
-                            {msg.message}
+                            {msg.content}
                         </Markdown>
                     })}
                     {aiTyping && (

@@ -16,8 +16,8 @@ const LeftPane = ({aiTyping, addMessage, messages }) => {
     if (!message.trim()) return
 
     const SenderMessage = {
-      message,
-      sender: user,
+      content: message,
+      senderId: user,
       self: true
     }
 
@@ -36,14 +36,14 @@ const LeftPane = ({aiTyping, addMessage, messages }) => {
       {/* CHAT MESSAGES (scrollable) */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((msg, index) => {
-          const isMe = msg.sender._id === user._id
+          const isMe = msg.senderId._id === user._id
           // const isAi = msg.sender._id === 'ai'
           return (
             <div key={index} className={`flex w-full ${isMe ? "justify-end" : "justify-start"}`}>
               <div className={`rounded-2xl px-4 py-3 max-w-[75%] ${isMe ? "bg-purple-600 text-white" : "bg-[#1f1f1f] text-gray-100"} shadow-md border border-white/5`}>
-                <p className="text-xs opacity-60 mb-1">{isMe ? "You" : msg.sender.email}</p>
+                <p className="text-xs opacity-60 mb-1">{isMe ? "You" : msg.senderId.email}</p>
                
-                  <p className="text-sm leading-relaxed">{msg.message}</p>
+                  <p className="text-sm leading-relaxed">{msg.content}</p>
 
               </div>
             </div>

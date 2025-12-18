@@ -8,6 +8,7 @@ import cors from "cors"
 import projectRoutes from './src/routes/projectRoutes.js'
 import teamRoutes from './src/routes/teamRoutes.js'
 import aiRoutes from './src/routes/ai.routes.js'
+import messagesRoutes from './src/routes/message.routes.js'
 
 
 
@@ -32,6 +33,7 @@ app.use('/api/users', userRoutes)
 app.use('/api/projects', projectRoutes)
 app.use('/api/team', teamRoutes)
 app.use('/api/ai', aiRoutes)
+app.use('/api/messages/', messagesRoutes)
 
 
 export default app

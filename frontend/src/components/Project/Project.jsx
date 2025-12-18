@@ -24,11 +24,25 @@ const Project = () => {
         }
     }
 
+    async function getMessages(){
+        try {
+       const res = await axiosClient.get(`/api/messages/${projectId}`)
+       const allMessages = res.data.data
+       console.log('messages',allMessages)
+
+       setMessages(allMessages.filter((m)=> m.senderType === 'user'))
+       setAiMessages(allMessages.filter((m)=> m.senderType === 'ai'))
+            
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     useEffect(() => {
         InitializeSocket(projectId)
 
         receive_message('project-message', (data) => {
-            if (data.sender._id === 'ai') {
+            if (data.senderId._id === 'ai') {
                 // console.log(JSON.parse(data.message))
                 setAiMessages((prev) => [...prev, data])
                 return
@@ -45,8 +59,8 @@ const Project = () => {
 
     // Fetch project
     useEffect(() => {
-
         getProject();
+        getMessages()
     }, [projectId]);
 
 

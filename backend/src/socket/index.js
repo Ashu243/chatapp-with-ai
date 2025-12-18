@@ -20,29 +20,29 @@ export const initSocket = async (io) => {
         //
         socket.on('message', async (data) => {
             // check if the message is for ai or not
-            const isAiMessage = data.message.toLowerCase().includes('@ai')
+            const isAiMessage = data.content.toLowerCase().includes('@ai')
 
-
+            // storing user message in db
             const userMessage = await Message.create({
                 senderId: socket.userId,
                 projectId: roomId,
-                content: data.message,
+                content: data.content,
                 senderType: 'user'
             })
 
             // sends the message to everyone expect the one who typed the message
             socket.broadcast.to(roomId).emit('project-message', {
                 _id: userMessage._id,
-                message: userMessage.content,
-                sender: {
+                content: userMessage.content,
+                senderId: {
                     _id: socket.userId,
-                    email: data.sender.email
+                    email: data.senderId.email
                 },
                 senderType: "user",
                 createdAt: userMessage.createdAt
             })
             if (isAiMessage) {
-                const prompt = data.message.replace('@ai', '')
+                const prompt = data.content.replace('@ai', '')
 
 
 
@@ -65,17 +65,31 @@ export const initSocket = async (io) => {
                     io.to(roomId).emit('ai-typing', true)
                     const result = await generateAIResult(prompt)
 
+                    // if the ai result is error then send the error to the client but don't save it in db
+                    if (!result?.success || !result?.content) {
+                        io.to(roomId).emit('project-message', {
+                            content: result.error,
+                            senderId: {
+                                _id: 'ai',
+                                email: 'AI'
+                            },
+                            senderType: "ai",
+                        })
+                        return
+                    }
+
+                    // storing the ai message in db
                     const aiMessage = await Message.create({
                         projectId: roomId,
                         senderType: 'ai',
-                        content: result
+                        content: result.content
                     })
 
-
+                    // sending the ai message
                     io.to(roomId).emit('project-message', {
                         _id: aiMessage._id,
-                        message: aiMessage.content,
-                        sender: {
+                        content: aiMessage.content,
+                        senderId: {
                             _id: 'ai',
                             email: 'AI'
                         },

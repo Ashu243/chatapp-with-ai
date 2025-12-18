@@ -1,4 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
+import { response } from "express";
 
 // The client gets the API key from the environment variable `GEMINI_API_KEY`.
 const ai = new GoogleGenAI({
@@ -49,18 +50,15 @@ IMPORTANT:
 - No markdown, no explanations outside JSON.
 `
     });
-    return response.text
-    }catch (error) {
-    if (error.status === 429) {
-      return JSON.stringify({
-        text: "AI is busy right now ⏳ Please try again in a few seconds."
-      });
+    return {
+      success: true,
+      content: response.text
     }
-
-    console.error("Gemini Error:", error);
-    return JSON.stringify({
-      text: "Something went wrong with AI. Please try again later."
-    });
+    }catch (error) {
+      return{
+        success: false,
+        content: "Something went wrong with AI. Please try again later"
+      }
   }
 }
 
