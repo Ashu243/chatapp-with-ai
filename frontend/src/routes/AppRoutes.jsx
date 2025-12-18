@@ -19,8 +19,8 @@ const AppRoutes = () => {
 
 
         <Routes>
-          <Route path='/login' element={<Login />} />
-          <Route path='/' element={<Register />} />
+          <Route path='/' element={<Login />} />
+          <Route path='/register' element={<Register />} />
           <Route element={<ProtectedRoutes />}>
 
             <Route path='/profile' element={<Profile />} />

@@ -57,12 +57,11 @@ const Project = () => {
             <div className="h-screen bg-[#0d0d0d] text-white flex flex-col">
                 <TeamInfoBar />
                 {/* HEADER */}
-                <div className="p-4 border-b border-[#222] bg-[#0f0f0f] flex items-center justify-between">
+                <div className="p-4 border-b border-[#222] bg-[#0f0f0f] flex items-center justify-center">
                     <h1 className="text-xl font-semibold">
                         {project ? project.projectName : "Loading..."}
                     </h1>
 
-                    <span className="text-gray-400 text-sm">Project ID: {projectId}</span>
                 </div>
 
 

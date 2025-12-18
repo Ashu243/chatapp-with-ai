@@ -21,38 +21,6 @@ const io = new Server(server, {
 
 initSocket(io)
 
-// io.use(async (socket, next) => {
-//     try {
-//         const rawCookies = socket.request.headers.cookie;
-
-//         if (!rawCookies) {
-//             return next(new Error("No cookies sent"));
-//         }
-
-//         const cookies = cookie.parse(rawCookies);
-//         const token = cookies.accessToken;
-
-//         if (!token) throw new ApiError(404, 'unauthorized User!')
-
-//         const projectId = socket.handshake.query.projectId
-//         if (!projectId) throw new ApiError(404, 'project id not found!')
-
-//         socket.project = await Project.findById(projectId)
-
-//         // verify token
-//         const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
-//         if (!decoded) throw new ApiError(400, 'invalid token!')
-
-//         socket.userId = decoded._id
-//         next()
-
-//     } catch (error) {
-//         throw new ApiError(400, 'invalid token')
-//     }
-
-// })
-
-
 
 
 

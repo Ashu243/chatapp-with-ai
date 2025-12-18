@@ -1,5 +1,4 @@
 import React, { useContext, useState, useRef, useEffect } from 'react'
-import Markdown from 'markdown-to-jsx'
 import { send_message } from '../../config/socket'
 import { authContext } from '../../context/AuthProvider'
 

@@ -66,7 +66,7 @@ const Login = () => {
                 </form>
 
                 <p className="text-center text-sm text-gray-400">
-                    New to the App? <a href="/" className="text-blue-400 font-medium">Register</a>
+                    New to the App? <a href="/register" className="text-blue-400 font-medium">Register</a>
                 </p>
             </div>
         </div>

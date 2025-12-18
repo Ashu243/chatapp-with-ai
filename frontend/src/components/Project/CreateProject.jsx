@@ -24,6 +24,8 @@ const CreateProject = () => {
 
   const navigate = useNavigate();
 
+  const userId = user?.user?._id || user?._id
+
   // Fetch all projects
   async function getProjects() {
     try {
@@ -160,7 +162,7 @@ const CreateProject = () => {
                   <p className="text-gray-400 text-sm mt-1">
                   Created on {new Date(project.createdAt).toLocaleDateString()}
                 </p>
-                {(user._id === team.ownerId)? <button onClick={()=> handleDelete(project._id)} className="text-red-500 underline cursor-pointer hover:text-red-700 text-sm mt-1">
+                {(userId === team.ownerId)? <button onClick={()=> handleDelete(project._id)} className="text-red-500 underline cursor-pointer hover:text-red-700 text-sm mt-1">
                   Delete
                 </button>: null}
                 </div>
