@@ -42,32 +42,9 @@ const LeftPane = ({aiTyping, addMessage, messages }) => {
             <div key={index} className={`flex w-full ${isMe ? "justify-end" : "justify-start"}`}>
               <div className={`rounded-2xl px-4 py-3 max-w-[75%] ${isMe ? "bg-purple-600 text-white" : "bg-[#1f1f1f] text-gray-100"} shadow-md border border-white/5`}>
                 <p className="text-xs opacity-60 mb-1">{isMe ? "You" : msg.sender.email}</p>
-                {/* {isAi ? (
-                  <div className="text-sm text-wrap leading-relaxed prose prose-invert max-w-none">
-                    <Markdown
-                      options={{
-                        overrides: {
-                          pre: {
-                            props: {
-                              className:
-                                "bg-[#0d0d0d] p-4 rounded-xl overflow-x-auto whitespace-pre-wrap break-words",
-                            },
-                          },
-                          code: {
-                            props: {
-                              className:
-                                "text-purple-400 text-sm break-words whitespace-pre-wrap",
-                            },
-                          },
-                        },
-                      }}
-                    >
-                      {msg.message}
-                    </Markdown>
-                  </div>
-                ) : ( */}
+               
                   <p className="text-sm leading-relaxed">{msg.message}</p>
-                {/* )} */}
+
               </div>
             </div>
           )
