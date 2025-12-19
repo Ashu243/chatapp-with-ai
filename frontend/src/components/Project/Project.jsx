@@ -8,10 +8,13 @@ import TeamInfoBar from "../Team/TeamInfoBar";
 
 const Project = () => {
     const { projectId } = useParams();
-    const [messages, setMessages] = useState([]);
-    const [aiMessages, setAiMessages] = useState([]);
+    const [UserMessages, setUserMessages] = useState([]);
+    const [AiMessages, setAiMessages] = useState([]);
     const [project, setProject] = useState(null);
     const [aiTyping, setaiTyping] = useState(false)
+    const [cursor, setCursor] = useState()
+    const [hasMoreMessage, setHasMoreMessage] = useState(true)
+    const [messages, setMessages] = useState([])
 
 
     async function getProject() {
@@ -24,15 +27,27 @@ const Project = () => {
         }
     }
 
-    async function getMessages(){
+    async function getMessages() {
         try {
-       const res = await axiosClient.get(`/api/messages/${projectId}`)
-       const allMessages = res.data.data
-       console.log('messages',allMessages)
 
-       setMessages(allMessages.filter((m)=> m.senderType === 'user'))
-       setAiMessages(allMessages.filter((m)=> m.senderType === 'ai'))
-            
+            if (!hasMoreMessage) return
+            const res = await axiosClient.get(`/api/messages/${projectId}?cursor=${cursor || ''}`)
+            const data = res.data.data
+
+            if (data.length === 0) {
+                setHasMoreMessage(false)
+                return
+            }
+            setMessages((prev) => [...data, ...prev])
+
+            console.log('messages', data)
+
+            //    setUserMessages(data.filter((m)=> m.senderType === 'user'))
+            //    setAiMessages(data.filter((m)=> m.senderType === 'ai'))
+
+            setCursor(data[0].createdAt)
+
+
         } catch (error) {
             console.log(error)
         }
@@ -47,7 +62,7 @@ const Project = () => {
                 setAiMessages((prev) => [...prev, data])
                 return
             }
-            setMessages((prev) => [...prev, data])
+            setUserMessages((prev) => [...prev, data])
         })
 
         receive_message('ai-typing', (status) => {
@@ -63,8 +78,12 @@ const Project = () => {
         getMessages()
     }, [projectId]);
 
-
-
+    // let UserMessages;
+    // let AiMessages;
+    useEffect(() => {
+         setUserMessages(messages.filter((m)=> m.senderType === 'user'))
+         setAiMessages(messages.filter((m)=> m.senderType === 'ai'))
+    }, [messages])
 
     return (
         <>
@@ -86,13 +105,14 @@ const Project = () => {
 
                     {/* LEFT SIDE — CHAT SECTION */}
                     <LeftPane
-                        messages={messages}
+                        userMessages={UserMessages}
                         aiTyping={aiTyping}
-                        addMessage={(msg) => setMessages((prev) => [...prev, msg])}
+                        getMessages={getMessages}
+                        addMessage={(msg) => setUserMessages((prev) => [...prev, msg])}
                         project={project} />
 
                     {/* RIGHT SIDE — AI CODE SECTION */}
-                    <RightPane aiMessages={aiMessages}
+                    <RightPane aiMessages={AiMessages}
                         aiTyping={aiTyping} />
                 </div>
 

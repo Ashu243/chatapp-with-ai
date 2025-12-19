@@ -21,10 +21,10 @@ const RightPane = ({ aiMessages, aiTyping }) => {
             {/* Content */}
             <div className="flex-1 overflow-y-auto p-6 space-y-6">
 
-                <div className="bg-[#111] border border-[#222] rounded-2xl p-5 text-gray-200">
                     
                     {aiMessages.map((msg, index) => {
-                        return <Markdown key={index}
+                return <div key={index} className="bg-[#111] border border-[#222] rounded-2xl p-5 text-gray-200">
+                         <Markdown 
                             options={{
                                 overrides: {
                                     h1: {
@@ -59,14 +59,15 @@ const RightPane = ({ aiMessages, aiTyping }) => {
                         >
                             {msg.content}
                         </Markdown>
+                        </div>
                     })}
                     {aiTyping && (
                         <div className="text-xs text-gray-400 italic px-4 mb-2">
                             AI is typing<span className="animate-pulse">...</span>
                         </div>
-                    )}
 
-                </div>
+)}
+                
 
                 <div ref={endRef} />
             </div>

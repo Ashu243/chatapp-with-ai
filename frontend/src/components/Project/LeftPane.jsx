@@ -2,30 +2,57 @@ import React, { useContext, useState, useRef, useEffect } from 'react'
 import { send_message } from '../../config/socket'
 import { authContext } from '../../context/AuthProvider'
 
-const LeftPane = ({aiTyping, addMessage, messages }) => {
+const LeftPane = ({ aiTyping, addMessage, userMessages, getMessages }) => {
   const { user } = useContext(authContext)
   const [message, setMessage] = useState('')
   const endRef = useRef(null)
+  const chatRef = useRef()
+  const [scroll, setScroll] = useState(true)
 
-  // auto-scroll on new messages
-  useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
 
+
+  
+  async function handleScroll() {
+    if (!chatRef.current) return
+    
+    const prevHeight = chatRef.current.scrollHeight
+    if (chatRef.current.scrollTop === 0) {
+      setScroll(false)
+      await getMessages()
+      requestAnimationFrame(() => {
+        chatRef.current.scrollTop =
+        chatRef.current.scrollHeight - prevHeight
+      })
+      console.log(prevHeight, 'new height: ', chatRef.current.scrollHeight)
+    }
+    
+  }
+  
   function send() {
     if (!message.trim()) return
-
+    
+    setScroll(true)
+    
     const SenderMessage = {
       content: message,
       senderId: user,
-      self: true
+      
     }
-
+    
     send_message('message', SenderMessage)
     addMessage(SenderMessage)
     setMessage('')
   }
-
+  // auto-scroll on new messages
+  useEffect(() => {
+    if(scroll) {
+    endRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }
+    
+  }, [userMessages])
+  
+  const userId = user?._id || user?.user?._id
+  
   return (
     <div className="w-1/3 border-r border-[#222] bg-[#0c0c0c] flex flex-col h-full justify-between">
       {/* Top Buttons */}
@@ -34,22 +61,22 @@ const LeftPane = ({aiTyping, addMessage, messages }) => {
       </div>
 
       {/* CHAT MESSAGES (scrollable) */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.map((msg, index) => {
-          const isMe = msg.senderId._id === user._id
+      <div ref={chatRef} onScroll={handleScroll} className="flex-1 overflow-y-auto p-4 space-y-4">
+        {userMessages.map((msg, index) => {
+          const isMe = msg.senderId._id === userId
           // const isAi = msg.sender._id === 'ai'
           return (
             <div key={index} className={`flex w-full ${isMe ? "justify-end" : "justify-start"}`}>
               <div className={`rounded-2xl px-4 py-3 max-w-[75%] ${isMe ? "bg-purple-600 text-white" : "bg-[#1f1f1f] text-gray-100"} shadow-md border border-white/5`}>
                 <p className="text-xs opacity-60 mb-1">{isMe ? "You" : msg.senderId.email}</p>
-               
-                  <p className="text-sm leading-relaxed">{msg.content}</p>
+
+                <p className="text-sm leading-relaxed">{msg.content}</p>
 
               </div>
             </div>
           )
         })}
-      
+
         <div ref={endRef} />
       </div>
 
