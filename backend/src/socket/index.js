@@ -56,7 +56,7 @@ export const initSocket = async (io) => {
 
                 try {
                     // console.log('ai is generating')
-                    // using rate limiting so the user cannot span or overuse the ai
+                    // using rate limiting so the user cannot spam or overuse the ai
                     // we are converting into string because the userid is object id not a string
                     await aiRateLimiter.consume(socket.userId.toString())
 

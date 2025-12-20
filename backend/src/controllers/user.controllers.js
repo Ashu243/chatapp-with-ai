@@ -3,6 +3,7 @@ import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import asynchandler from "../utils/asyncHandler.js";
 import redis from "../services/redis.services.js";
+import { loginRateLimiter } from "../rateLimiters/loginRateLimiter.js";
 
 
 const generateAccessAndRefreshToken = async function (user) {
@@ -57,6 +58,14 @@ const Login = asynchandler(async function (req, res) {
     const { email, password } = req.body
     if (!email || !password) throw new ApiError(400, 'All fields are required!')
 
+    const key = `${email}:${req.ip}` // example -> john@example.com:192.168.1.10
+    try {
+        // rate limiting per user. --> key is email and ip. because if a hacker target one email and hit the rate limit then a legit user tries to login then it will not login
+        await loginRateLimiter.consume(key)
+    } catch (error) {
+        throw new ApiError(429, 'Too many login attempts. Please try again later.')
+    }
+
 
     const user = await User.findOne({ email })
     if (!user) throw new ApiError(404, 'user not found!')
@@ -69,6 +78,9 @@ const Login = asynchandler(async function (req, res) {
 
 
     const loggedInUser = await User.findById(user._id).select("-password")
+
+    // if the login is success then delete the key otherwise the limit will not reset.
+    await loginRateLimiter.delete(key)
 
     const options = {
         httpOnly: true,
@@ -103,25 +115,25 @@ const getAllUsers = asynchandler(async function (req, res) {
     }).select("-password")
 
     return res
-    .status(200)
-    .json(
-        new ApiResponse(200, allUsers, 'all users fetched successfully')
-    )
+        .status(200)
+        .json(
+            new ApiResponse(200, allUsers, 'all users fetched successfully')
+        )
 })
 
 
-const SearchUser = asynchandler(async function(req, res){
+const SearchUser = asynchandler(async function (req, res) {
     const query = req.query.query
 
     const users = await User.find({
-        email: {$regex: query, $options: 'i'}
+        email: { $regex: query, $options: 'i' }
     }).select("email _id")
 
     return res
-    .status(200)
-    .json(
-        new ApiResponse(200, users, "users fetched successfully")
-    )
+        .status(200)
+        .json(
+            new ApiResponse(200, users, "users fetched successfully")
+        )
 
 })
 
