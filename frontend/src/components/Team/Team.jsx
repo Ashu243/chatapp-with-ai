@@ -36,7 +36,7 @@ const Team = () => {
     
     const handleDelete = async (teamId) => {
         try {
-            await axiosClient.delete(`/api/team/${teamId}`)
+            await axiosClient.delete(`/api/team/${teamId}`, {show: true})
             getTeams()
         } catch (error) {
             console.log(error)

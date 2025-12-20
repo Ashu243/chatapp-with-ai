@@ -15,7 +15,7 @@ const Login = () => {
         async function handleSubmit(e) {
         try {
         e.preventDefault()
-        const res = await axiosClient.post('/api/users/login', {email, password})
+        const res = await axiosClient.post('/api/users/login', {email, password}, {show: true})
 
         setUser(res.data.data)
         navigate('/team')

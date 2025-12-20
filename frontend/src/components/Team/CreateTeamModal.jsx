@@ -10,7 +10,7 @@ const CreateTeamModal = ({open, setOpen, getTeams}) => {
         try {
             
         if (teamName.trim() === "") return;
-        const res = await axiosClient.post('/api/team', {teamName})
+        const res = await axiosClient.post('/api/team', {teamName}, {show: true})
         setTeamName("");
         setOpen(false);
         getTeams()

@@ -39,7 +39,7 @@ const CreateProject = () => {
 
   const handleDelete = async (projectId)=>{
     try {
-    const res = await axiosClient.delete(`/api/projects/team/${teamId}/project/${projectId}`)
+    const res = await axiosClient.delete(`/api/projects/team/${teamId}/project/${projectId}`, {show: true})
     getProjects()
     } catch (error) {
       console.log(error)
@@ -58,7 +58,7 @@ const CreateProject = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axiosClient.post(`/api/projects/${teamId}`, { projectName });
+      await axiosClient.post(`/api/projects/${teamId}`, { projectName }, {show: true});
       setProjectName("");
       setModalOpen(false);
       getProjects();
@@ -73,7 +73,8 @@ const CreateProject = () => {
       await axiosClient.put("/api/team/add-member", {
         teamId,
         email: emailToAdd,
-      });
+      },
+    {show: true});
 
       setEmailToAdd("");
       setSuggestions([]);

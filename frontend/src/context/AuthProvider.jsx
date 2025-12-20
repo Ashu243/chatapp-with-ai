@@ -13,7 +13,7 @@ const AuthProvider = ({ children }) => {
     useEffect(() => {
         async function getUser() {
             try {
-                const res = await axiosClient.get("/api/users/profile");
+                const res = await axiosClient.get("/api/users/profile", {skip: true});
                 setUser(res.data.data);
             } catch (error) {
                 setUser(null);
