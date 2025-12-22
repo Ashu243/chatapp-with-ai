@@ -12,7 +12,7 @@ const port = process.env.PORT || 3000
 // Create HTTP server
 const server = http.createServer(app);
 
-const io = new Server(server, {
+export const io = new Server(server, {
     cors: {
         origin: "http://localhost:5173",  // your frontend
         methods: ["GET", "POST"]

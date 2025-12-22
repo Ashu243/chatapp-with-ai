@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import axiosClient from "../../config/axios";
 import LeftPane from "./LeftPane";
 import RightPane from "./RightPane";
-import InitializeSocket, { receive_message } from "../../config/socket";
+import InitializeSocket, { disconnectSocket, joinProjectRoom, leaveProjectRoom, receive_message } from "../../config/socket";
 import TeamInfoBar from "../Team/TeamInfoBar";
 
 const Project = () => {
@@ -54,7 +54,8 @@ const Project = () => {
     }
 
     useEffect(() => {
-        InitializeSocket(projectId)
+        InitializeSocket()
+        joinProjectRoom(projectId)
 
         receive_message('project-message', (data) => {
             if (data.senderId._id === 'ai') {
@@ -68,8 +69,11 @@ const Project = () => {
         receive_message('ai-typing', (status) => {
             setaiTyping(status)
         })
+        return () => {
+            leaveProjectRoom(projectId)
+        };
 
-    }, [])
+    }, [projectId])
 
 
     // Fetch project

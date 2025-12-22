@@ -21,7 +21,7 @@ const AddMemberModal = ({emailToAdd, open ,onClose, suggestions, handleAddCollab
                         <div className="space-y-4 relative">
                             <input
                                 type="text"
-                                placeholder="Enter collaborator email"
+                                placeholder="Enter member email"
                                 className="w-full px-4 py-3 rounded-xl bg-[#111] text-white border border-[#333] outline-none focus:border-purple-600 transition"
                                 value={emailToAdd}
                                 onChange={handleAddCollabChange}

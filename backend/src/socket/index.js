@@ -12,10 +12,22 @@ export const initSocket = async (io) => {
 
     io.on("connection", (socket) => {
         console.log("User connected:", socket.id);
-        let roomId = socket.project._id.toString()
-        console.log(roomId)
+        let projectRoomId;
+        
+        
+        socket.on('join-project', (projectId)=>{
+            projectRoomId = projectId
+            socket.join(projectRoomId)
+            console.log(projectRoomId)
+        })
 
-        socket.join(roomId)
+        socket.on("leave-project", (projectId)=>{
+            socket.leave(projectId)
+        })
+
+
+        // join personal room
+        socket.join(`user:${socket.userId}`)
 
         //
         socket.on('message', async (data) => {
@@ -25,13 +37,13 @@ export const initSocket = async (io) => {
             // storing user message in db
             const userMessage = await Message.create({
                 senderId: socket.userId,
-                projectId: roomId,
+                projectId: projectRoomId,
                 content: data.content,
                 senderType: 'user'
             })
 
             // sends the message to everyone expect the one who typed the message
-            socket.broadcast.to(roomId).emit('project-message', {
+            socket.broadcast.to(projectRoomId).emit('project-message', {
                 _id: userMessage._id,
                 content: userMessage.content,
                 senderId: {
@@ -46,13 +58,13 @@ export const initSocket = async (io) => {
 
 
 
-                // if there is already roomid in set then don't call the ai to generate response
-                if (aiLocks.has(roomId)) {
+                // if there is already projectRoomId in set then don't call the ai to generate response
+                if (aiLocks.has(projectRoomId)) {
                     return
                 }
 
                 // adds room Id to set (aiLocks) 
-                aiLocks.add(roomId)
+                aiLocks.add(projectRoomId)
 
                 try {
                     // console.log('ai is generating')
@@ -62,12 +74,12 @@ export const initSocket = async (io) => {
 
 
                     // tell the users that ai is typing something
-                    io.to(roomId).emit('ai-typing', true)
+                    io.to(projectRoomId).emit('ai-typing', true)
                     const result = await generateAIResult(prompt)
 
                     // if the ai result is error then send the error to the client but don't save it in db
                     if (!result?.success || !result?.content) {
-                        io.to(roomId).emit('project-message', {
+                        io.to(projectRoomId).emit('project-message', {
                             content: result.error,
                             senderId: {
                                 _id: 'ai',
@@ -80,13 +92,13 @@ export const initSocket = async (io) => {
 
                     // storing the ai message in db
                     const aiMessage = await Message.create({
-                        projectId: roomId,
+                        projectId: projectRoomId,
                         senderType: 'ai',
                         content: result.content
                     })
 
                     // sending the ai message
-                    io.to(roomId).emit('project-message', {
+                    io.to(projectRoomId).emit('project-message', {
                         _id: aiMessage._id,
                         content: aiMessage.content,
                         senderId: {
@@ -99,7 +111,7 @@ export const initSocket = async (io) => {
 
                 } catch (error) {
                     if (error.msBeforeNext) {
-                        io.to(roomId).emit('project-message', {
+                        io.to(projectRoomId).emit('project-message', {
                             message: 'AI is cooling down. Please wait a bit...',
                             sender: {
                                 _id: 'ai',
@@ -112,11 +124,11 @@ export const initSocket = async (io) => {
                         console.log(error)
                     }
                 } finally {
-                    aiLocks.delete(roomId)
+                    aiLocks.delete(projectRoomId)
                 }
 
                 // stop typing
-                io.to(roomId).emit('ai-typing', false)
+                io.to(projectRoomId).emit('ai-typing', false)
             }
 
         })
@@ -124,7 +136,7 @@ export const initSocket = async (io) => {
         // Disconnect
         socket.on("disconnect", () => {
             console.log("User disconnected:", socket.id);
-            socket.leave(roomId)
+            socket.leave(projectRoomId)
         });
     });
 

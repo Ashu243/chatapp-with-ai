@@ -17,10 +17,10 @@ export const socketAuth = async(socket, next)=>{
 
         if (!token) throw new ApiError(404, 'unauthorized User!')
 
-        const projectId = socket.handshake.query.projectId
-        if (!projectId) throw new ApiError(404, 'project id not found!')
+        // const projectId = socket.handshake.query.projectId
+        // if (!projectId) throw new ApiError(404, 'project id not found!')
 
-        socket.project = await Project.findById(projectId)
+        // socket.project = await Project.findById(projectId)
 
         // verify token
         const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)

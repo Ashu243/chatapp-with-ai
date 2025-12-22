@@ -1,5 +1,7 @@
+import { io } from "../../server.js";
 import Team from "../models/Team.models.js";
 import User from "../models/user.model.js";
+import { initSocket } from "../socket/index.js";
 import ApiError from "../utils/ApiError.js"
 import ApiResponse from "../utils/ApiResponse.js"
 import asyncHandler from "../utils/asyncHandler.js"
@@ -70,6 +72,11 @@ const addmember = asyncHandler(async function (req, res) {
         {$addToSet: {members: user._id}},
         {new: true}
     )
+
+    io.to(`user:${user._id}`).emit("notification", {
+        type: "Team_Added",
+        message: `you have been added to ${team.teamName}`
+    })
 
     return res
     .status(200)
