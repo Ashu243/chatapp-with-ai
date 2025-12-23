@@ -1,0 +1,50 @@
+import { useContext } from "react";
+import { authContext } from "../context/AuthProvider";
+import { useNavigate } from "react-router-dom";
+import axiosClient from "../config/axios";
+import { disconnectSocket } from "../config/socket";
+
+const Navbar = () => {
+  const { user, setUser } = useContext(authContext);
+  const navigate = useNavigate();
+
+  async function logout() {
+   const res = await axiosClient.post('/api/users/logout', {show: true})
+   console.log(res)
+    setUser(null);
+    disconnectSocket()
+    navigate("/");
+  }
+
+  return (
+    <div className="h-[6vh] w-full bg-[#0f0f0f] border-b border-[#222] flex items-center justify-between px-6">
+      
+      {/* LEFT: Brand */}
+      <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate("/team")}>
+        <span className="text-purple-500 text-xl font-bold">⚡</span>
+        <h1 className="text-lg text-white font-semibold">DevCollab</h1>
+      </div>
+
+     
+
+      {/* RIGHT: Actions */}
+      <div className="flex items-center gap-4">
+        
+
+        {/* User */}
+        {!user?'':<div className="flex items-center gap-2 text-sm">
+          {/* <div className="bg-purple-600 rounded-full flex items-center justify-center uppercase font-bold h-9 w-9 text-lg text-purple-200"><span>{user?.email[0]}</span></div> */}
+          <button
+            onClick={logout}
+            className="bg-purple-600 hover:bg-purple-700 px-3 py-1 rounded-md text-white text-m"
+          >
+            Logout
+          </button>
+        </div>}
+      </div>
+
+    </div>
+  );
+};
+
+export default Navbar;

@@ -113,9 +113,9 @@ const CreateProject = () => {
 
   return (
     <>
-      <TeamInfoBar />
 
-      <div className="min-h-screen bg-[#0d0d0d] text-white px-6 py-10 flex flex-col items-center">
+      <TeamInfoBar />
+      <div className="min-h-[88vh] bg-[#0d0d0d] text-white px-6 py-10 flex flex-col items-center">
         
         {/* Header */}
         <div className="w-full max-w-3xl flex justify-between items-center mb-6">

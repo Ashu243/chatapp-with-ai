@@ -46,7 +46,7 @@ const Team = () => {
     const userId = user?.user?._id || user?._id
 
     return (
-        <div className="min-h-screen bg-[#0d0d0d] text-white p-6">
+        <div className="min-h-[94vh] bg-[#0d0d0d] text-white p-6">
 
             {/* Heading */}
             <div className="flex items-center justify-between mb-8">

@@ -1,65 +1,47 @@
 import { GoogleGenAI } from "@google/genai";
-import { response } from "express";
+import { Message } from "../models/message.models.js";
 
-// The client gets the API key from the environment variable `GEMINI_API_KEY`.
 const ai = new GoogleGenAI({
-    apiKey: process.env.GOOGLE_API_KEY
+  apiKey: process.env.GOOGLE_API_KEY
 });
 
+export const generateAIResult = async ({ prompt, projectRoomId }) => {
+  try {
+    const previousMessages = await Message.find({ projectId: projectRoomId })
+      .sort({ createdAt: -1 })
+      .limit(10);
 
-export const generateAIResult = async (prompt) => {
-    try {
-            const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: prompt,
-        systemInstructions: `
-You are a senior MERN stack developer with 10+ years of experience.
+    previousMessages.reverse();
 
-Rules:
-- Follow best practices.
-- Write modular, scalable, and maintainable code.
-- Handle edge cases and errors.
-- Do not break existing functionality.
-- Add clear comments in code.
-- Create files only when needed.
+    const contents = previousMessages.map(msg => ({
+      role: msg.senderType === "ai" ? "model" : "user",
+      parts: [{ text: msg.content }]
+    }));
 
-RESPONSE FORMAT (STRICT JSON ONLY):
+    contents.push({
+      role: "user",
+      parts: [{ text: prompt }]
+    });
 
-{
-  "text": "Short explanation of what was created",
-  "fileTree": {
-    "path/to/file.js": {
-      "file": {
-        "contents": "code here"
-      }
-    }
-  },
-  "buildCommand": {
-    "mainItem": "npm",
-    "commands": []
-  },
-  "startCommand": {
-    "mainItem": "npm",
-    "commands": []
-  }
-}
-
-IMPORTANT:
-- Do NOT add anything outside this JSON.
-- Do NOT use filenames like routes/index.js
-- No markdown, no explanations outside JSON.
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents,
+      systemInstruction: `
+You are a helpful, friendly AI assistant inside a team collaboration chat app.
+Be clear, concise, and conversational.
 `
     });
+
     return {
       success: true,
       content: response.text
-    }
-    }catch (error) {
-      return{
-        success: false,
-        content: "Something went wrong with AI. Please try again later"
-      }
+    };
+
+  } catch (error) {
+    console.error(error);
+    return {
+      success: false,
+      content: "Something went wrong with AI. Please try again later."
+    };
   }
-}
-
-
+};

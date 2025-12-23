@@ -37,7 +37,7 @@ const AuthProvider = ({ children }) => {
         InitializeSocket()
 
         receive_message("notification", ({ message }) => {
-            toast(message)
+            toast.info(message)
         })
 
         return () => {

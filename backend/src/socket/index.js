@@ -66,6 +66,8 @@ export const initSocket = async (io) => {
                 // adds room Id to set (aiLocks) 
                 aiLocks.add(projectRoomId)
 
+                // tell the users that ai is typing something
+                io.to(projectRoomId).emit('ai-typing', true)
                 try {
                     // console.log('ai is generating')
                     // using rate limiting so the user cannot spam or overuse the ai
@@ -73,9 +75,7 @@ export const initSocket = async (io) => {
                     await aiRateLimiter.consume(socket.userId.toString())
 
 
-                    // tell the users that ai is typing something
-                    io.to(projectRoomId).emit('ai-typing', true)
-                    const result = await generateAIResult(prompt)
+                    const result = await generateAIResult({prompt, projectRoomId})
 
                     // if the ai result is error then send the error to the client but don't save it in db
                     if (!result?.success || !result?.content) {
@@ -125,10 +125,9 @@ export const initSocket = async (io) => {
                     }
                 } finally {
                     aiLocks.delete(projectRoomId)
+                    io.to(projectRoomId).emit('ai-typing', false)
                 }
 
-                // stop typing
-                io.to(projectRoomId).emit('ai-typing', false)
             }
 
         })
