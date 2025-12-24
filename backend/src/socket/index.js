@@ -29,6 +29,14 @@ export const initSocket = async (io) => {
         // join personal room
         socket.join(`user:${socket.userId}`)
 
+        socket.on('typing', (user)=>{
+            socket.to(projectRoomId).emit('typing', user)
+        })
+
+        socket.on('stop-typing', (user)=>{
+            socket.to(projectRoomId).emit('stop-typing', user)
+        })
+
         //
         socket.on('message', async (data) => {
             // check if the message is for ai or not

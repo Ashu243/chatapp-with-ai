@@ -1,5 +1,5 @@
 import React, { useContext, useState, useRef, useEffect } from 'react'
-import { send_message } from '../../config/socket'
+import InitializeSocket, { receive_message, send_message } from '../../config/socket'
 import { authContext } from '../../context/AuthProvider'
 
 const LeftPane = ({ aiTyping, addMessage, userMessages, getMessages }) => {
@@ -8,53 +8,78 @@ const LeftPane = ({ aiTyping, addMessage, userMessages, getMessages }) => {
   const endRef = useRef(null)
   const chatRef = useRef()
   const [scroll, setScroll] = useState(true)
+  const [typingIndicator, setTypingIndicator] = useState(null)
+
+  const username = user?.user?.email || user?.email
+  const name = username.split('@')
+
+  let typingTimeout;
+  const handleInput = () => {
+    send_message('typing', { user: name[0] })
+
+    clearTimeout(typingTimeout)
+
+    typingTimeout = setTimeout(() => {
+      send_message("stop-typing", { user: name[0] })
+    }, 1000)
+  }
+
+  useEffect(() => {
+    InitializeSocket()
+    receive_message('typing', ({user}) => {
+      const message = `${user} is typing`
+      setTypingIndicator(message)
+    })
+    receive_message('stop-typing', (user) => {
+      setTypingIndicator(null)
+    })
+
+  }, [])
 
 
-
-  
   async function handleScroll() {
     if (!chatRef.current) return
-    
+
     const prevHeight = chatRef.current.scrollHeight
     if (chatRef.current.scrollTop === 0) {
       setScroll(false)
       await getMessages()
       requestAnimationFrame(() => {
         chatRef.current.scrollTop =
-        chatRef.current.scrollHeight - prevHeight
+          chatRef.current.scrollHeight - prevHeight
       })
       console.log(prevHeight, 'new height: ', chatRef.current.scrollHeight)
     }
-    
+
   }
-  
+
   function send() {
     if (!message.trim()) return
-    
+
     setScroll(true)
-    
+
     const SenderMessage = {
       content: message,
       senderId: user,
-      
+
     }
-    
+
     send_message('message', SenderMessage)
     addMessage(SenderMessage)
     setMessage('')
   }
   // auto-scroll on new messages
   useEffect(() => {
-    if(scroll) {
-    endRef.current?.scrollIntoView({ behavior: 'smooth' })
+    if (scroll) {
+      endRef.current?.scrollIntoView({ behavior: 'smooth' })
     }
-    
+
   }, [userMessages])
-  
+
   const userId = user?._id || user?.user?._id
-  
+
   return (
-    <div className="w-1/3 border-r border-[#222] bg-[#0c0c0c] flex flex-col h-full justify-between">
+    <div className="w-2/3 border-r border-[#222] bg-[#0c0c0c] flex flex-col h-full justify-between">
       {/* Top Buttons */}
       <div className="p-4 border-b border-[#222] bg-[#0c0c0c] flex items-center justify-center">
         <h2>Chat Section</h2>
@@ -76,14 +101,18 @@ const LeftPane = ({ aiTyping, addMessage, userMessages, getMessages }) => {
             </div>
           )
         })}
-
+        {typingIndicator && (
+          <div className="text-xs text-gray-400 italic px-4 mb-2">
+            {typingIndicator} <span className="animate-pulse">...</span>
+          </div>
+        )}
         <div ref={endRef} />
       </div>
 
       {/* CHAT INPUT (fixed at bottom of LeftPane) */}
       <form onSubmit={(e) => { e.preventDefault(); send() }} className="p-4 border-t border-[#222] bg-[#0b0b0b]">
         <div className="flex gap-2">
-          <input value={message} onChange={(e) => setMessage(e.target.value)} type="text" placeholder="Type a message..." className="flex-1 bg-[#111] px-4 py-3 rounded-xl border border-[#333] outline-none focus:border-purple-600" />
+          <input value={message} onInput={handleInput} onChange={(e) => setMessage(e.target.value)} type="text" placeholder="Type a message..." className="flex-1 bg-[#111] px-4 py-3 rounded-xl border border-[#333] outline-none focus:border-purple-600" />
           <button type="submit" disabled={aiTyping} className="bg-purple-600 hover:bg-purple-700 px-5 py-3 rounded-xl font-medium">Send</button>
         </div>
       </form>

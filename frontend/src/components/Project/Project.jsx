@@ -93,13 +93,6 @@ const Project = () => {
         <>
             <div className="h-[94vh] bg-[#0d0d0d] text-white flex flex-col">
                 <TeamInfoBar projectName={project? project.projectName: 'loading...'} />
-                {/* HEADER */}
-                {/* <div className="p-4 border-b border-[#222] bg-[#0f0f0f] flex items-center justify-center">
-                    <h1 className="text-xl font-semibold">
-                        {project ? project.projectName : "Loading..."}
-                    </h1>
-
-                </div> */}
 
 
                 {/* TWO-PANE LAYOUT */}
