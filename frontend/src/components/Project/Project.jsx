@@ -3,13 +3,13 @@ import { useParams } from "react-router-dom";
 import axiosClient from "../../config/axios";
 import LeftPane from "./LeftPane";
 import RightPane from "./RightPane";
-import InitializeSocket, { disconnectSocket, joinProjectRoom, leaveProjectRoom, receive_message } from "../../config/socket";
+import InitializeSocket, { joinProjectRoom, leaveProjectRoom, receive_message } from "../../config/socket";
 import TeamInfoBar from "../Team/TeamInfoBar";
 
 const Project = () => {
     const { projectId } = useParams();
-    const [UserMessages, setUserMessages] = useState([]);
-    const [AiMessages, setAiMessages] = useState([]);
+    // const [UserMessages, setUserMessages] = useState([]);
+    // const [AiMessages, setAiMessages] = useState([]);
     const [project, setProject] = useState(null);
     const [aiTyping, setaiTyping] = useState(false)
     const [cursor, setCursor] = useState()
@@ -38,9 +38,13 @@ const Project = () => {
                 setHasMoreMessage(false)
                 return
             }
-            setMessages((prev) => [...data, ...prev])
+            setMessages((prev) => {
+                const updated = [...data, ...prev]
+                console.log("Project messages after API:", updated)
+                return updated
+            })
 
-            console.log('messages', data)
+            // console.log('messages', data)
 
             //    setUserMessages(data.filter((m)=> m.senderType === 'user'))
             //    setAiMessages(data.filter((m)=> m.senderType === 'ai'))
@@ -58,12 +62,12 @@ const Project = () => {
         joinProjectRoom(projectId)
 
         receive_message('project-message', (data) => {
-            if (data.senderId._id === 'ai') {
-                // console.log(JSON.parse(data.message))
-                setAiMessages((prev) => [...prev, data])
-                return
-            }
-            setUserMessages((prev) => [...prev, data])
+            // if (data.senderId._id === 'ai') {
+            //     // console.log(JSON.parse(data.message))
+            //     setAiMessages((prev) => [...prev, data])
+            //     return
+            // }
+            setMessages((prev) => [...prev, data])
         })
 
         receive_message('ai-typing', (status) => {
@@ -84,39 +88,39 @@ const Project = () => {
 
     // let UserMessages;
     // let AiMessages;
-    useEffect(() => {
-         setUserMessages(messages.filter((m)=> m.senderType === 'user'))
-         setAiMessages(messages.filter((m)=> m.senderType === 'ai'))
-    }, [messages])
+    // useEffect(() => {
+    //      setUserMessages(messages.filter((m)=> m.senderType === 'user'))
+    //      setAiMessages(messages.filter((m)=> m.senderType === 'ai'))
+    // }, [messages])
 
     return (
-        <>
-            <div className="h-[94vh] bg-[#0d0d0d] text-white flex flex-col">
-                <TeamInfoBar projectName={project? project.projectName: 'loading...'} />
+        <div className="flex">
+                <TeamInfoBar projectName={project ? project.projectName : 'loading...'} />
+            <div className="h-[94vh] w-3/4 bg-[#0d0d0d] text-white flex flex-col">
 
 
                 {/* TWO-PANE LAYOUT */}
                 <div className="flex flex-1 h-full overflow-hidden">
 
 
+                    {/* <RightPane 
+                        aiTyping={aiTyping} /> */}
 
                     {/* LEFT SIDE — CHAT SECTION */}
                     <LeftPane
-                        userMessages={UserMessages}
+                        // userMessages={UserMessages}
+                        messages={messages}
                         aiTyping={aiTyping}
                         getMessages={getMessages}
-                        addMessage={(msg) => setUserMessages((prev) => [...prev, msg])}
+                        addMessage={(msg) => setMessages((prev) => [...prev, msg])}
                         project={project} />
 
-                    {/* RIGHT SIDE — AI CODE SECTION */}
-                    <RightPane aiMessages={AiMessages}
-                        aiTyping={aiTyping} />
                 </div>
 
 
             </div>
 
-        </>
+        </div>
     );
 };
 

@@ -1,8 +1,9 @@
 import React, { useContext, useState, useRef, useEffect } from 'react'
 import InitializeSocket, { receive_message, send_message } from '../../config/socket'
 import { authContext } from '../../context/AuthProvider'
+import Markdown from "markdown-to-jsx";
 
-const LeftPane = ({ aiTyping, addMessage, userMessages, getMessages }) => {
+const LeftPane = ({ aiTyping, addMessage, messages, getMessages }) => {
   const { user } = useContext(authContext)
   const [message, setMessage] = useState('')
   const endRef = useRef(null)
@@ -24,9 +25,13 @@ const LeftPane = ({ aiTyping, addMessage, userMessages, getMessages }) => {
     }, 1000)
   }
 
+  // console.log('leftpane messages: ',messages)
+  // // useEffect(()=>{
+  // // },[messages])
+
   useEffect(() => {
     InitializeSocket()
-    receive_message('typing', ({user}) => {
+    receive_message('typing', ({ user }) => {
       const message = `${user} is typing`
       setTypingIndicator(message)
     })
@@ -74,12 +79,17 @@ const LeftPane = ({ aiTyping, addMessage, userMessages, getMessages }) => {
       endRef.current?.scrollIntoView({ behavior: 'smooth' })
     }
 
-  }, [userMessages])
+  }, [messages])
 
   const userId = user?._id || user?.user?._id
 
+
+  if (messages.length === 0) {
+    return null
+  }
+
   return (
-    <div className="w-2/3 border-r border-[#222] bg-[#0c0c0c] flex flex-col h-full justify-between">
+    <div className="w-full border-r border-[#222] bg-[#0c0c0c] flex flex-col h-full justify-between">
       {/* Top Buttons */}
       <div className="p-4 border-b border-[#222] bg-[#0c0c0c] flex items-center justify-center">
         <h2>Chat Section</h2>
@@ -87,20 +97,72 @@ const LeftPane = ({ aiTyping, addMessage, userMessages, getMessages }) => {
 
       {/* CHAT MESSAGES (scrollable) */}
       <div ref={chatRef} onScroll={handleScroll} className="flex-1 overflow-y-auto p-4 space-y-4">
-        {userMessages.map((msg, index) => {
-          const isMe = msg.senderId._id === userId
-          // const isAi = msg.sender._id === 'ai'
+        {messages.map((msg, index) => {
+          if (msg.senderType === "ai") {
+            return (
+              <div key={index} className="flex justify-start">
+                <div className="bg-[#111] border border-[#333] rounded-xl px-4 py-3 max-w-[75%]">
+                  <p className="text-xs opacity-60 mb-1">AI</p>
+                  <Markdown 
+                            options={{
+                                overrides: {
+                                    h1: {
+                                        props: { className: "text-xl font-semibold mb-3 text-white" },
+                                    },
+                                    h2: {
+                                        props: { className: "text-lg font-semibold mb-2 text-white" },
+                                    },
+                                    p: {
+                                        props: { className: "text-sm leading-relaxed mb-3 text-gray-300" },
+                                    },
+                                    ul: {
+                                        props: { className: "list-disc ml-5 mb-3 text-gray-300" },
+                                    },
+                                    li: {
+                                        props: { className: "mb-1" },
+                                    },
+                                    pre: {
+                                        props: {
+                                            className:
+                                                "bg-[#0b0b0b] border border-[#222] rounded-xl p-4 overflow-x-auto my-4",
+                                        },
+                                    },
+                                    code: {
+                                        props: {
+                                            className:
+                                                "text-purple-400 text-sm font-mono whitespace-pre-wrap break-words",
+                                        },
+                                    },
+                                },
+                            }}
+                        >
+                            {msg.content}
+                        </Markdown>
+                </div>
+              </div>
+            )
+          }
+
+          // USER MESSAGE
+          const isMe = msg.senderId?._id === userId
+
           return (
-            <div key={index} className={`flex w-full ${isMe ? "justify-end" : "justify-start"}`}>
-              <div className={`rounded-2xl px-4 py-3 max-w-[75%] ${isMe ? "bg-purple-600 text-white" : "bg-[#1f1f1f] text-gray-100"} shadow-md border border-white/5`}>
-                <p className="text-xs opacity-60 mb-1">{isMe ? "You" : msg.senderId.email}</p>
-
-                <p className="text-sm leading-relaxed">{msg.content}</p>
-
+            <div key={index} className={`flex ${isMe ? "justify-end" : "justify-start"}`}>
+              <div className={`rounded-xl px-4 py-3 max-w-[75%] ${isMe ? "bg-purple-600" : "bg-[#1f1f1f]"
+                }`}>
+                <p className="text-xs opacity-60 mb-1">
+                  {isMe ? "You" : msg.senderId?.email}
+                </p>
+                <p className="text-sm">{msg.content}</p>
               </div>
             </div>
           )
         })}
+        {aiTyping && (
+                        <div className="text-xs text-gray-400 italic px-4 mb-2">
+                            AI is typing<span className="animate-pulse">...</span>
+                        </div>
+        )}
         {typingIndicator && (
           <div className="text-xs text-gray-400 italic px-4 mb-2">
             {typingIndicator} <span className="animate-pulse">...</span>

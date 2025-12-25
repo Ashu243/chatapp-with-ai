@@ -112,10 +112,10 @@ const CreateProject = () => {
   };
 
   return (
-    <>
+    <div className="flex">
 
       <TeamInfoBar />
-      <div className="min-h-[88vh] bg-[#0d0d0d] text-white px-6 py-10 flex flex-col items-center">
+      <div className="min-h-[94vh] w-3/4 bg-[#0d0d0d] text-white px-6 py-10 flex flex-col items-center">
         
         {/* Header */}
         <div className="w-full max-w-3xl flex justify-between items-center mb-6">
@@ -222,7 +222,7 @@ const CreateProject = () => {
           AddCollabButton={AddCollabButton}
         />
       </div>
-    </>
+    </div>
   );
 };
 
