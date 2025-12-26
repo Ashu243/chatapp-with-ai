@@ -9,6 +9,7 @@ import { authContext } from "../../context/AuthProvider";
 
 import InitializeSocket, { receive_message, send_message } from "../../config/socket";
 import TeamSocketProvider from "../../context/TeamSocketProvider";
+import ToggleTeamBarButton from "../ToggleTeamBarButton";
 
 const CreateProject = () => {
   const { team, setTeam } = useContext(TeamContext);
@@ -27,6 +28,7 @@ const CreateProject = () => {
 
   const [emailToAdd, setEmailToAdd] = useState("");
   const [suggestions, setSuggestions] = useState([]);
+  const [isTeamBarOpen ,setIsTeamBarOpen] = useState(false)
 
   const navigate = useNavigate();
 
@@ -135,31 +137,35 @@ const CreateProject = () => {
     <TeamSocketProvider teamId={teamId}>
     <div className="flex">
 
-      <TeamInfoBar />
-      <div className="min-h-[94vh] w-3/4 bg-[#0d0d0d] text-white px-6 py-10 flex flex-col items-center">
+
+       <ToggleTeamBarButton onClick={() => setIsTeamBarOpen(true)} />
+       
+
+      <TeamInfoBar isOpen={isTeamBarOpen} onClose={()=> setIsTeamBarOpen(false)} />
+      <div className="min-h-[94vh] w-full md:w-3/4 bg-[#0d0d0d] text-white px-6 py-10 flex flex-col items-center">
         
         {/* Header */}
-        <div className="w-full max-w-3xl flex justify-between items-center mb-6">
+        <div className="w-full max-w-3xl flex justify-between items-center flex-wrap mb-6">
           <h1 className="text-3xl font-bold">Your Projects</h1>
 
-          <div className="space-x-3 flex">
+          <div className="space-x-3 flex flex-wrap ">
             <button
               onClick={() => setAddCollabOpen(true)}
-              className="px-4 py-2 rounded-xl bg-purple-700 hover:bg-purple-800 transition"
+              className="px-2 py-1 md:px-4 md:py-2 my-2 md:my-0 text-sm md:text-base rounded-xl bg-purple-700 hover:bg-purple-800 transition"
             >
               Add Member
             </button>
 
             <button
               onClick={() => setCollabOpen(true)}
-              className="px-4 py-2 rounded-xl bg-purple-700 hover:bg-purple-800 transition"
+              className="px-2 py-1 md:px-4 md:py-2 my-2 md:my-0 text-sm md:text-base rounded-xl bg-purple-700 hover:bg-purple-800 transition"
             >
               View Members
             </button>
 
             <button
               onClick={() => setModalOpen(true)}
-              className="px-5 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 transition shadow-lg"
+              className="px-2 py-1 md:px-4 md:py-2 my-2 md:my-0 text-sm md:text-base rounded-xl bg-purple-700 hover:bg-purple-800 transition"
             >
               + Create Project
             </button>

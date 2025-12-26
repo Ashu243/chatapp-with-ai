@@ -6,6 +6,7 @@ import RightPane from "./RightPane";
 import InitializeSocket, { joinProjectRoom, leaveProjectRoom, receive_message, send_message } from "../../config/socket";
 import TeamInfoBar from "../Team/TeamInfoBar";
 import TeamSocketProvider from "../../context/TeamSocketProvider";
+import ToggleTeamBarButton from "../ToggleTeamBarButton";
 
 const Project = () => {
     const { projectId } = useParams();
@@ -16,6 +17,8 @@ const Project = () => {
     const [cursor, setCursor] = useState()
     const [hasMoreMessage, setHasMoreMessage] = useState(true)
     const [messages, setMessages] = useState([])
+
+      const [isTeamBarOpen ,setIsTeamBarOpen] = useState(false)
 
 
     async function getProject() {
@@ -97,14 +100,16 @@ const Project = () => {
     // }, [messages])
 
     if(!project){
-        return null
+        return <div>Loading</div>
     }
 
     return (
+        
         <TeamSocketProvider teamId={project.teamId} >
+            <ToggleTeamBarButton onClick={()=> setIsTeamBarOpen(true)} />
         <div className="flex">
-                <TeamInfoBar projectName={project ? project.projectName : 'loading...'} />
-            <div className="h-[94vh] w-3/4 bg-[#0d0d0d] text-white flex flex-col">
+                <TeamInfoBar isOpen={isTeamBarOpen} onClose={()=> setIsTeamBarOpen(false)} projectName={project ? project.projectName : 'loading...'} />
+            <div className="h-[94vh] w-full md:w-3/4 bg-[#0d0d0d] text-white flex flex-col">
 
 
                 {/* TWO-PANE LAYOUT */}
