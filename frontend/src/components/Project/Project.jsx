@@ -3,8 +3,9 @@ import { useParams } from "react-router-dom";
 import axiosClient from "../../config/axios";
 import LeftPane from "./LeftPane";
 import RightPane from "./RightPane";
-import InitializeSocket, { joinProjectRoom, leaveProjectRoom, receive_message } from "../../config/socket";
+import InitializeSocket, { joinProjectRoom, leaveProjectRoom, receive_message, send_message } from "../../config/socket";
 import TeamInfoBar from "../Team/TeamInfoBar";
+import TeamSocketProvider from "../../context/TeamSocketProvider";
 
 const Project = () => {
     const { projectId } = useParams();
@@ -70,6 +71,8 @@ const Project = () => {
             setMessages((prev) => [...prev, data])
         })
 
+        
+
         receive_message('ai-typing', (status) => {
             setaiTyping(status)
         })
@@ -93,7 +96,12 @@ const Project = () => {
     //      setAiMessages(messages.filter((m)=> m.senderType === 'ai'))
     // }, [messages])
 
+    if(!project){
+        return null
+    }
+
     return (
+        <TeamSocketProvider teamId={project.teamId} >
         <div className="flex">
                 <TeamInfoBar projectName={project ? project.projectName : 'loading...'} />
             <div className="h-[94vh] w-3/4 bg-[#0d0d0d] text-white flex flex-col">
@@ -121,6 +129,7 @@ const Project = () => {
             </div>
 
         </div>
+        </TeamSocketProvider>
     );
 };
 

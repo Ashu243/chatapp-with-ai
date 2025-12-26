@@ -7,10 +7,16 @@ import AddMemberModal from "../Team/AddMemberModal";
 import ViewMemberModal from "../Team/ViewMemberModal";
 import { authContext } from "../../context/AuthProvider";
 
+import InitializeSocket, { receive_message, send_message } from "../../config/socket";
+import TeamSocketProvider from "../../context/TeamSocketProvider";
+
 const CreateProject = () => {
   const { team, setTeam } = useContext(TeamContext);
   const {user} = useContext(authContext)
   const { teamId } = useParams();
+
+
+    // const [onlineUsers, setOnlineUsers] = useState([])
 
   const [projectName, setProjectName] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
@@ -45,6 +51,20 @@ const CreateProject = () => {
       console.log(error)
     }
   }
+
+
+      useEffect(() => {
+          InitializeSocket()
+
+          send_message('join-team', teamId)
+  
+
+          return ()=>{
+            send_message('leave-team', teamId)
+          }
+  
+      }, [])
+  
 
   useEffect(() => {
     getProjects();
@@ -112,6 +132,7 @@ const CreateProject = () => {
   };
 
   return (
+    <TeamSocketProvider teamId={teamId}>
     <div className="flex">
 
       <TeamInfoBar />
@@ -223,6 +244,7 @@ const CreateProject = () => {
         />
       </div>
     </div>
+    </TeamSocketProvider>
   );
 };
 

@@ -17,18 +17,18 @@ const AppRoutes = () => {
       <BrowserRouter>
         <AuthProvider>
           <TeamProvider>
-            {<Navbar />}
-            <Routes>
-              <Route path='/' element={<Login />} />
-              <Route path='/register' element={<Register />} />
-              <Route element={<ProtectedRoutes />}>
-                <Route path='/profile' element={<Profile />} />
-                <Route path='/team' element={<Team />} />
-                <Route path='/team/:teamId' element={<CreateProject />} />
-                <Route path='/project/:projectId' element={<Project />} />
-              </Route>
+              {<Navbar />}
+              <Routes>
+                <Route path='/' element={<Login />} />
+                <Route path='/register' element={<Register />} />
+                <Route element={<ProtectedRoutes />}>
+                  <Route path='/profile' element={<Profile />} />
+                  <Route path='/team' element={<Team />} />
+                  <Route path='/team/:teamId' element={<CreateProject />} />
+                  <Route path='/project/:projectId' element={<Project />} />
+                </Route>
 
-            </Routes>
+              </Routes>
           </TeamProvider>
         </AuthProvider>
       </BrowserRouter>

@@ -1,9 +1,12 @@
 import React, { useContext } from "react"
 import { TeamContext } from "../../context/TeamProvider"
+import { TeamSocketContext } from "../../context/TeamSocketProvider"
+import { authContext } from "../../context/AuthProvider"
 
 const TeamInfoBar = ({ projectName }) => {
   const { team } = useContext(TeamContext)
-//   console.log(projectName)
+  const {onlineUsers} = useContext(TeamSocketContext)
+  const {user} = useContext(authContext)
 
   if (!team) return null
 
@@ -36,26 +39,34 @@ const TeamInfoBar = ({ projectName }) => {
 
         <div className="space-y-2">
           {team.members?.map((member, index) => {
-            const initial = member.email?.[0]?.toUpperCase()
+            // const initial = member.email?.[0]?.toUpperCase()
+            const isOnline = onlineUsers.includes(member._id)
+            const isMe = user._id === member._id 
 
-            return (
-              <div
-                key={index}
-                className="flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-[#17171a] transition"
-              >
-                {/* Avatar */}
-                <div className="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center text-sm font-semibold text-white">
-                  {initial}
+
+             return (
+            <div
+              key={member._id}
+              className="flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-[#17171a]"
+            >
+              {/* Avatar */}
+              <div className="relative">
+                <div className="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center text-white">
+                  {member.email[0].toUpperCase()}
                 </div>
 
-                {/* Email */}
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm text-gray-200 truncate">
-                    {member.email}
-                  </p>
-                </div>
+                {/* Online Dot */}
+                <span
+                  className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-[#0d0d0f]
+                    ${isOnline ? "bg-green-500" : "bg-gray-500"}`}
+                />
               </div>
-            )
+
+              <p className="text-sm text-gray-200 truncate">
+                {member.email} <span className="text-purple-300" >{isMe? '(You)': ''}</span>
+              </p>
+            </div>
+          )
           })}
         </div>
       </div>

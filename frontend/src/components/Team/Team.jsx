@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import CreateTeamModal from "./CreateTeamModal";
 import axiosClient from "../../config/axios";
 import { authContext } from "../../context/AuthProvider";
+import InitializeSocket, { receive_message, send_message } from "../../config/socket";
 
 const Team = () => {
     const navigate = useNavigate();
@@ -11,7 +12,7 @@ const Team = () => {
     const { user } = useContext(authContext)
     const [loading, setLoading] = useState(true)
 
-    
+
     async function getTeams() {
         try {
             setLoading(true)
@@ -23,26 +24,27 @@ const Team = () => {
             console.log(error)
         }
     }
-    
+
+
     useEffect(() => {
         if (!user) {
             return null
-        } else{
+        } else {
             getTeams()
         }
-        
+
     }, [user])
-    
-    
+
+
     const handleDelete = async (teamId) => {
         try {
-            await axiosClient.delete(`/api/team/${teamId}`, {show: true})
+            await axiosClient.delete(`/api/team/${teamId}`, { show: true })
             getTeams()
         } catch (error) {
             console.log(error)
         }
     }
-    
+
     const userId = user?.user?._id || user?._id
 
     return (

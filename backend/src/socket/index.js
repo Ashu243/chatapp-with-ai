@@ -6,34 +6,53 @@ import { socketAuth } from "./middleware.js";
 export const initSocket = async (io) => {
 
     io.use(socketAuth)
-
+    const onlineUsers = new Map()// store key value pairs
     const aiLocks = new Set() //only stores unique values 
 
 
     io.on("connection", (socket) => {
         console.log("User connected:", socket.id);
         let projectRoomId;
-        
-        
-        socket.on('join-project', (projectId)=>{
-            projectRoomId = projectId
-            socket.join(projectRoomId)
-            console.log(projectRoomId)
+
+        let userId = socket.userId
+        let teamRoomId;
+
+        socket.on('join-team', (teamId)=>{
+            teamRoomId = teamId
+            socket.join(teamRoomId)
         })
 
-        socket.on("leave-project", (projectId)=>{
+        socket.on('leave-team', (teamId)=>{
+            socket.leave(teamId)
+        })
+
+
+        socket.on('join-project', (projectId) => {
+            projectRoomId = projectId
+            socket.join(projectRoomId)
+            // console.log(projectRoomId)
+        })
+
+        socket.on("leave-project", (projectId) => {
             socket.leave(projectId)
+        })
+
+        socket.on('online-users', () => {
+            onlineUsers.set(userId, socket.id)
+
+            io.to(teamRoomId).emit('online-users', Array.from(onlineUsers.keys()))
+
         })
 
 
         // join personal room
         socket.join(`user:${socket.userId}`)
 
-        socket.on('typing', (user)=>{
+        socket.on('typing', (user) => {
             socket.to(projectRoomId).emit('typing', user)
         })
 
-        socket.on('stop-typing', (user)=>{
+        socket.on('stop-typing', (user) => {
             socket.to(projectRoomId).emit('stop-typing', user)
         })
 
@@ -83,7 +102,7 @@ export const initSocket = async (io) => {
                     await aiRateLimiter.consume(socket.userId.toString())
 
 
-                    const result = await generateAIResult({prompt, projectRoomId})
+                    const result = await generateAIResult({ prompt, projectRoomId })
 
                     // if the ai result is error then send the error to the client but don't save it in db
                     if (!result?.success || !result?.content) {
@@ -120,12 +139,12 @@ export const initSocket = async (io) => {
                 } catch (error) {
                     if (error.msBeforeNext) {
                         io.to(projectRoomId).emit('project-message', {
-                            message: 'AI is cooling down. Please wait a bit...',
-                            sender: {
+                            content: 'AI is cooling down. Please wait a bit...',
+                            senderType: 'ai',
+                            senderId: {
                                 _id: 'ai',
                                 email: 'AI'
                             }
-
                         })
                     }
                     else {
@@ -143,6 +162,23 @@ export const initSocket = async (io) => {
         // Disconnect
         socket.on("disconnect", () => {
             console.log("User disconnected:", socket.id);
+            let disconnectedUser;
+
+            for (let [userId, socketId] of onlineUsers.entries()) {
+                // checking if the socketId saved in onlineUsers map is equals to socket.id
+                if (socketId == socket.id) {
+                    // if yes then we got the user who has disconnected
+                    disconnectedUser = userId
+                    // removing the user that has disconnected
+                    onlineUsers.delete(userId)
+                    break
+                }
+            }
+
+            if (disconnectedUser) {
+                io.emit('online-users', Array.from(onlineUsers.keys()))
+            }
+
             socket.leave(projectRoomId)
         });
     });

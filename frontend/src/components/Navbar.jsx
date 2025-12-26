@@ -33,7 +33,7 @@ const Navbar = () => {
 
         {/* User */}
         {!user?'':<div className="flex items-center gap-2 text-sm">
-          {/* <div className="bg-purple-600 rounded-full flex items-center justify-center uppercase font-bold h-9 w-9 text-lg text-purple-200"><span>{user?.email[0]}</span></div> */}
+          <div className="bg-purple-600 rounded-full flex items-center justify-center uppercase font-bold h-7 w-7 text-sm text-purple-200"><span>{user?.email[0]}</span></div>
           <button
             onClick={logout}
             className="bg-purple-600 hover:bg-purple-700 px-3 py-1 rounded-md text-white text-m"
