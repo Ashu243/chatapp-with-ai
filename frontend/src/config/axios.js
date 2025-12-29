@@ -24,7 +24,31 @@ axiosClient.interceptors.response.use(
         }
         return response
     },
-    (error)=>{
+    async (error)=>{
+         // routes where refresh should NOT happen
+    const skipRefreshRoutes = [
+      "/api/users/login",
+      "/api/users/refresh-token",
+      "/api/users/profile",
+    ]
+
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !skipRefreshRoutes.some(route => // some is used on array to check if at least one element passes a given test. return true or false
+        originalRequest.url.includes(route)
+      )
+    ) {
+      originalRequest._retry = true
+
+      try {
+        await axiosClient.post("/auth/refresh-token")
+        return api(originalRequest)
+      } catch {
+        window.location.href = "/"
+      }
+    }
+        console.log(error.config)
         if(error.config?.skip){
             return Promise.reject(error)
         }

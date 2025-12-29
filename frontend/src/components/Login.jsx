@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useState } from 'react'
 import axiosClient from '../config/axios'
 import { useNavigate } from 'react-router-dom'
@@ -10,7 +10,14 @@ const Login = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const navigate = useNavigate()
-    const {setUser} = useContext(authContext)
+    const {setUser, user} = useContext(authContext)
+
+    useEffect(()=>{
+        if(user){
+            navigate('/team')
+        }
+    }, [user])
+
 
         async function handleSubmit(e) {
         try {

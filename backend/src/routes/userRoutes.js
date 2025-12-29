@@ -1,5 +1,5 @@
 import express, { Router } from "express";
-import { getAllUsers, Login, LogoutUser, Register, SearchUser, UserProfile } from "../controllers/user.controllers.js";
+import { getAllUsers, Login, LogoutUser, refreshAccessToken, Register, SearchUser, UserProfile } from "../controllers/user.controllers.js";
 import { VerifyJWT } from "../middlewares/auth.middlewares.js";
 
 
@@ -26,6 +26,10 @@ router.route('/logout').post(
 router.route('/search').get(
     VerifyJWT,
     SearchUser
+)
+
+router.route('/refresh-token').post(
+    refreshAccessToken
 )
 
 

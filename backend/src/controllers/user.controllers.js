@@ -4,6 +4,7 @@ import ApiResponse from "../utils/ApiResponse.js";
 import asynchandler from "../utils/asyncHandler.js";
 import redis from "../services/redis.services.js";
 import { loginRateLimiter } from "../rateLimiters/loginRateLimiter.js";
+import jwt from 'jsonwebtoken'
 
 
 const generateAccessAndRefreshToken = async function (user) {
@@ -155,9 +156,10 @@ const refreshAccessToken = asynchandler(async function (req, res) {
     // getting the user
 
     const user = await User.findById(decodedToken._id)
+    if(!user) throw new ApiError(401, 'user not found')
 
     // getting token from redis
-    const redisToken = await redis.get(`refresh:${decoded._id}`)
+    const redisToken = await redis.get(`refresh:${decodedToken._id}`)
     if (!redisToken) throw new ApiError(401, "token expired on invalid")
 
     // checking if the redis token matches or not with the cookie token
