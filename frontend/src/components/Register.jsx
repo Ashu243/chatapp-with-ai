@@ -2,7 +2,7 @@ import React from 'react'
 import { useEffect } from 'react'
 import { useState } from 'react'
 import axiosClient from '../config/axios'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const Register = () => {
     const navigate = useNavigate()
@@ -15,7 +15,7 @@ const Register = () => {
         e.preventDefault()
         const res = await axiosClient.post('/api/users/register', {username, email, password})
         console.log(res.data)
-        navigate('/project')
+        navigate('/team')
         } catch (error) {
             console.log(error.response.data.message || "something went wrong")
         }
@@ -23,8 +23,8 @@ const Register = () => {
 
 
     return (
-        <div className="min-h-[94vh] flex items-center justify-center bg-gray-900 p-4">
-            <div className="w-full max-w-md bg-gray-800 rounded-2xl shadow-xl p-8 space-y-6">
+        <div className="min-h-[94vh] flex items-center justify-center bg-[#0c0c0c] p-4">
+            <div className="w-full max-w-md bg-[#151414] rounded-2xl shadow-xl p-8 space-y-6">
                 <h2 className="text-3xl font-semibold text-center text-white">Create Account</h2>
                 <p className="text-center text-gray-400 text-sm">Join us and get started!</p>
 
@@ -63,14 +63,14 @@ const Register = () => {
 
                     <button
                         type="submit"
-                        className="w-full bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition-all"
+                        className="w-full bg-purple-600 text-white py-2 rounded-lg font-medium hover:bg-purple-700 transition-all"
                     >
                         Register
                     </button>
                 </form>
 
                 <p className="text-center text-sm text-gray-400">
-                    Already have an account? <a href="/" className="text-blue-400 font-medium">Login</a>
+                    Already have an account? <Link to="/login" className="text-purple-400 font-medium">Login</Link>
                 </p>
             </div>
         </div>

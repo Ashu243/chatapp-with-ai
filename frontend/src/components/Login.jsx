@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useState } from 'react'
 import axiosClient from '../config/axios'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useContext } from 'react'
 import { authContext } from '../context/AuthProvider'
 
@@ -33,8 +33,8 @@ const Login = () => {
 
 
     return (
-        <div className="min-h-[94vh] flex items-center justify-center bg-gray-900 p-4">
-            <div className="w-full max-w-md bg-gray-800 rounded-2xl shadow-xl p-8 space-y-6">
+        <div className="min-h-[94vh] flex items-center justify-center bg-[#0c0c0c] p-4">
+            <div className="w-full max-w-md bg-[#151414] rounded-2xl shadow-xl p-8 space-y-6">
                 <h2 className="text-3xl font-semibold text-center text-white">Login</h2>
 
 
@@ -66,14 +66,14 @@ const Login = () => {
 
                     <button
                         type="submit"
-                        className="w-full bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition-all"
+                        className="w-full bg-purple-600 text-white py-2 rounded-lg font-medium hover:bg-purple-700 transition-all"
                     >
                         Login
                     </button>
                 </form>
 
                 <p className="text-center text-sm text-gray-400">
-                    New to the App? <a href="/register" className="text-blue-400 font-medium">Register</a>
+                    New to the App? <Link to="/register" className="text-purple-400 font-medium">Register</Link>
                 </p>
             </div>
         </div>

@@ -13,7 +13,7 @@ const Navbar = () => {
    console.log(res)
     setUser(null);
     disconnectSocket()
-    navigate("/");
+    navigate("/login");
   }
 
   const email = user?.user?.email || user?.email
@@ -22,7 +22,7 @@ const Navbar = () => {
     <div className="h-[6vh] w-full bg-[#0f0f0f] border-b border-[#222] flex items-center justify-between px-6">
       
       {/* LEFT: Brand */}
-      <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate("/team")}>
+      <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate("/")}>
         <span className="text-purple-500 text-xl font-bold">⚡</span>
         <h1 className="text-lg text-white font-semibold">DevCollab</h1>
       </div>

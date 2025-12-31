@@ -84,9 +84,9 @@ const LeftPane = ({ aiTyping, addMessage, messages, getMessages }) => {
   const userId = user?._id || user?.user?._id
 
 
-  // if (messages.length === 0) {
-  //   return null
-  // }
+  if (!user) {
+    return null
+  }
 
   return (
     <div className="w-full border-r border-[#222] bg-[#0c0c0c] flex flex-col h-full justify-between">

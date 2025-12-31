@@ -80,7 +80,7 @@ axiosClient.interceptors.response.use(
         // retry original request
         return axiosClient(originalRequest);
       } catch (refreshError) {
-        window.location.href = "/";
+        window.location.href = "/login";
         return Promise.reject(refreshError);
       }
     }

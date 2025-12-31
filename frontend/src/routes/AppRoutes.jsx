@@ -10,6 +10,7 @@ import AuthProvider from '../context/AuthProvider.jsx'
 import Team from '../components/Team/Team.jsx'
 import TeamProvider from '../context/TeamProvider.jsx'
 import Navbar from '../components/Navbar.jsx'
+import Hero from '../components/LandingPage/Hero.jsx'
 
 const AppRoutes = () => {
   return (
@@ -19,7 +20,9 @@ const AppRoutes = () => {
           <TeamProvider>
               {<Navbar />}
               <Routes>
-                <Route path='/' element={<Login />} />
+
+                <Route path='/login' element={<Login />} />
+                <Route path='/' element={<Hero />} />
                 <Route path='/register' element={<Register />} />
                 <Route element={<ProtectedRoutes />}>
                   <Route path='/profile' element={<Profile />} />
