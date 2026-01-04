@@ -156,7 +156,7 @@ const refreshAccessToken = asynchandler(async function (req, res) {
     // getting the user
 
     const user = await User.findById(decodedToken._id)
-    if(!user) throw new ApiError(401, 'user not found')
+    if (!user) throw new ApiError(401, 'user not found')
 
     // getting token from redis
     const redisToken = await redis.get(`refresh:${decodedToken._id}`)
@@ -171,8 +171,10 @@ const refreshAccessToken = asynchandler(async function (req, res) {
 
     const options = {
         httpOnly: true,
-        secure: true
-    }
+        secure: true,
+        sameSite: "none",
+        path: "/"
+    };
 
     return res
         .status(200)
@@ -191,9 +193,12 @@ const LogoutUser = asynchandler(async function (req, res) {
 
 
     const options = {
+        httpOnly: true,
         secure: true,
-        httpOnly: true
-    }
+        sameSite: "none",
+        path: "/"
+    };
+
 
     return res
         .status(200)
