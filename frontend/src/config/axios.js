@@ -23,51 +23,22 @@ function capitalize(value) {
  * Runs AFTER backend sends response
  */
 axiosClient.interceptors.response.use(
-  (response) => response,
+    (response)=>{
+        if(response.config.show && response.data?.message){
 
-  async (error) => {
-    const originalRequest = error.config;
-
-    if (!originalRequest || !error.response) {
-      return Promise.reject(error);
+            toast.success(capitalize(response.data.message))
+        }
+        return response
+    },
+    (error)=>{
+        if(error.config?.skip){
+            return Promise.reject(error)
+        }
+        const message = error.response?.data?.message || 'Something went worng, Please try again later'
+        toast.error(message)
+        return Promise.reject(error)
     }
-
-    if (originalRequest.url?.includes("/api/users/refresh-token")) {
-      return Promise.reject(error);
-    }
-
-    const skipRefreshRoutes = [
-      "/api/users/login",
-      "/api/users/profile",
-    ];
-
-    if (
-      error.response.status === 401 &&
-      !originalRequest._retry &&
-      !skipRefreshRoutes.some(route =>
-        originalRequest.url?.includes(route)
-      )
-    ) {
-      originalRequest._retry = true;
-
-      try {
-        await axiosClient.post("/api/users/refresh-token");
-        return axiosClient(originalRequest);
-      } catch {
-        // ❌ DO NOTHING HERE
-        return Promise.reject(error);
-      }
-    }
-
-    if (!originalRequest.skip) {
-      toast.error(
-        error.response?.data?.message ||
-        "Something went wrong"
-      );
-    }
-
-    return Promise.reject(error);
-  }
-);
+    
+)
 
 export default axiosClient;

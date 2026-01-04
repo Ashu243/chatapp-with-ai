@@ -14,27 +14,19 @@ const AuthProvider = ({ children }) => {
 
     const isOnline = navigator.onLine
 
-
 useEffect(() => {
-  async function initAuth() {
-    try {
-      const res = await axiosClient.get("/api/users/profile", { skip: true });
-      setUser(res.data.data);
-    } catch {
-      try {
-        await axiosClient.post("/api/users/refresh-token");
-        const res = await axiosClient.get("/api/users/profile", { skip: true });
-        setUser(res.data.data);
-      } catch {
-        setUser(null);
-      }
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  initAuth();
-}, []);
+        async function getUser() {
+            try {
+                const res = await axiosClient.get("/api/users/profile", {skip: true});
+                setUser(res.data.data);
+            } catch (error) {
+                setUser(null);
+            } finally {
+                setLoading(false); // <= MOST IMPORTANT LINE
+            }
+        }
+        getUser();
+    }, []);
 
 
 
