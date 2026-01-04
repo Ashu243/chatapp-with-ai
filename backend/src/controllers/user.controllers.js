@@ -85,8 +85,10 @@ const Login = asynchandler(async function (req, res) {
 
     const options = {
         httpOnly: true,
-        secure: true
-    }
+        secure: true,
+        sameSite: "none",
+        path: "/"
+    };
 
     return res
         .status(200)
