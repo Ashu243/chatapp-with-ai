@@ -14,7 +14,7 @@ const server = http.createServer(app);
 
 export const io = new Server(server, {
     cors: {
-        origin: "http://localhost:5173",  // your frontend
+        origin: process.env.CLIENT_URL,  // your frontend
         methods: ["GET", "POST"],
         credentials: true
     }
