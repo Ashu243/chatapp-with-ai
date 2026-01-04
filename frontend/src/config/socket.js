@@ -1,6 +1,8 @@
+import { toast } from "react-toastify";
 import { io } from "socket.io-client";
 
 let socketInstance;
+
 
 const InitializeSocket = () => {
     if (socketInstance) return socketInstance;
@@ -11,8 +13,9 @@ const InitializeSocket = () => {
     });
 
     socketInstance.on("connect", () => {
-        console.log("connected", socketInstance.id);
+        console.log("connected");
     });
+    
 
     return socketInstance;
 };

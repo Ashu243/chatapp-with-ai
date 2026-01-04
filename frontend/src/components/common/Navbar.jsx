@@ -1,18 +1,20 @@
 import { useContext } from "react";
-import { authContext } from "../context/AuthProvider";
+import { authContext } from "../../context/AuthProvider";
 import { useNavigate } from "react-router-dom";
-import axiosClient from "../config/axios";
-import { disconnectSocket } from "../config/socket";
+import axiosClient from "../../config/axios";
+import { disconnectSocket } from "../../config/socket";
+import { toast } from "react-toastify";
 
 const Navbar = () => {
   const { user, setUser } = useContext(authContext);
   const navigate = useNavigate();
 
   async function logout() {
-   const res = await axiosClient.post('/api/users/logout', {show: true})
-   console.log(res)
+   const res = await axiosClient.post('/api/users/logout')
+  //  console.log(res)
     setUser(null);
     disconnectSocket()
+    toast.success('User logged out!')
     navigate("/login");
   }
 

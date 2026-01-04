@@ -1,7 +1,7 @@
 import React from 'react'
 import { useEffect } from 'react'
 import { useState } from 'react'
-import axiosClient from '../config/axios'
+import axiosClient from '../../../config/axios'
 import { Link, useNavigate } from 'react-router-dom'
 
 const Register = () => {

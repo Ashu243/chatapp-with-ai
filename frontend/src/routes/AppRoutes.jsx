@@ -1,16 +1,15 @@
 import React from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import Register from '../components/Register'
-import Login from '../components/Login'
-import Profile from '../components/Profile'
+import Register from '../components/pages/auth/Register.jsx'
+import Login from '../components/pages/auth/Login.jsx'
 import CreateProject from '../components/Project/CreateProject.jsx'
 import Project from '../components/Project/Project.jsx'
-import ProtectedRoutes from '../components/ProtectedRoutes.jsx'
+import ProtectedRoutes from '../components/common/ProtectedRoutes.jsx'
 import AuthProvider from '../context/AuthProvider.jsx'
 import Team from '../components/Team/Team.jsx'
 import TeamProvider from '../context/TeamProvider.jsx'
-import Navbar from '../components/Navbar.jsx'
-import Hero from '../components/LandingPage/Hero.jsx'
+import Navbar from '../components/common/Navbar.jsx'
+import Hero from '../components/pages/LandingPage/Hero.jsx'
 
 const AppRoutes = () => {
   return (
@@ -25,7 +24,6 @@ const AppRoutes = () => {
                 <Route path='/' element={<Hero />} />
                 <Route path='/register' element={<Register />} />
                 <Route element={<ProtectedRoutes />}>
-                  <Route path='/profile' element={<Profile />} />
                   <Route path='/team' element={<Team />} />
                   <Route path='/team/:teamId' element={<CreateProject />} />
                   <Route path='/project/:projectId' element={<Project />} />

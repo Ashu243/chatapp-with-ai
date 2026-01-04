@@ -9,15 +9,15 @@ import { authContext } from "../../context/AuthProvider";
 
 import InitializeSocket, { receive_message, send_message } from "../../config/socket";
 import TeamSocketProvider from "../../context/TeamSocketProvider";
-import ToggleTeamBarButton from "../ToggleTeamBarButton";
+import ToggleTeamBarButton from "../Team/ToggleTeamBarButton";
+import LoadingBar from "../common/LoadingBar";
 
 const CreateProject = () => {
   const { team, setTeam } = useContext(TeamContext);
   const {user} = useContext(authContext)
   const { teamId } = useParams();
 
-
-    // const [onlineUsers, setOnlineUsers] = useState([])
+  const [loading, setLoading] = useState(false)
 
   const [projectName, setProjectName] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
@@ -37,11 +37,14 @@ const CreateProject = () => {
   // Fetch all projects
   async function getProjects() {
     try {
+      setLoading(true)
       const res = await axiosClient.get(`/api/team/${teamId}`);
       setProjects(res.data.data.projects || []);
       setTeam(res.data.data);
+      setLoading(false)
     } catch (error) {
       console.log(error);
+      setLoading(false)
     }
   }
 
@@ -174,7 +177,12 @@ const CreateProject = () => {
 
         {/* Projects List */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-3xl">
-          {projects.length === 0 ? (
+          {loading? (
+            <div className="flex justify-center items-center w-full bg-transparent h-32" >
+              <LoadingBar />
+            </div>
+            ): 
+          projects.length === 0 ? (
             <p className="text-gray-400">No projects yet. Create one!</p>
           ) : (
             [...projects].reverse().map((project) => (

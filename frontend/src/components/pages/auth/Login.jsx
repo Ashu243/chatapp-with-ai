@@ -1,31 +1,42 @@
 import React, { useEffect } from 'react'
 import { useState } from 'react'
-import axiosClient from '../config/axios'
+import axiosClient from '../../../config/axios'
 import { Link, useNavigate } from 'react-router-dom'
 import { useContext } from 'react'
-import { authContext } from '../context/AuthProvider'
+import { authContext } from '../../../context/AuthProvider'
 
 const Login = () => {
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const navigate = useNavigate()
-    const {setUser, user} = useContext(authContext)
+    const { setUser, user } = useContext(authContext)
 
-    useEffect(()=>{
-        if(user){
+    useEffect(() => {
+        if (user) {
             navigate('/team')
         }
     }, [user])
-
-
-        async function handleSubmit(e) {
+    
+    async function handleDemoAccount(e) {
         try {
-        e.preventDefault()
-        const res = await axiosClient.post('/api/users/login', {email, password}, {show: true})
+            e.preventDefault()
+            const res = await axiosClient.post('/api/users/login', { email: 'demo@example.com', password: 'demopassword' }, { show: true })
 
-        setUser(res.data.data)
-        navigate('/team')
+            setUser(res.data.data)
+            navigate('/team')
+        } catch (error) {
+            console.log(error.response?.data?.message || "something went wrong")
+        }
+    }
+
+    async function handleSubmit(e) {
+        try {
+            e.preventDefault()
+            const res = await axiosClient.post('/api/users/login', { email, password }, { show: true })
+            // console.log(res.data.data.user)
+            setUser(res.data.data.user)
+            navigate('/team')
         } catch (error) {
             console.log(error.response?.data?.message || "something went wrong")
         }
@@ -69,6 +80,13 @@ const Login = () => {
                         className="w-full bg-purple-600 text-white py-2 rounded-lg font-medium hover:bg-purple-700 transition-all"
                     >
                         Login
+                    </button>
+                    <button
+                        type="button"
+                        onClick={handleDemoAccount}
+                        className="w-full bg-gray-800 text-white py-2 rounded-lg font-medium hover:bg-gray-700 transition-all"
+                    >
+                        Use Demo Account
                     </button>
                 </form>
 

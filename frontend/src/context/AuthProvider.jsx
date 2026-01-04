@@ -12,6 +12,7 @@ const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true); // <= important
 
+    const isOnline = navigator.onLine
 
 
     useEffect(() => {
@@ -29,7 +30,9 @@ const AuthProvider = ({ children }) => {
         getUser();
     }, []);
 
-
+    if (!isOnline) {
+        toast.error("You are Offline. Please check your internet connection")
+    }
 
 
     useEffect(() => {

@@ -4,6 +4,7 @@ import CreateTeamModal from "./CreateTeamModal";
 import axiosClient from "../../config/axios";
 import { authContext } from "../../context/AuthProvider";
 import InitializeSocket, { receive_message, send_message } from "../../config/socket";
+import LoadingBar from "../common/LoadingBar";
 
 const Team = () => {
     const navigate = useNavigate();
@@ -47,6 +48,11 @@ const Team = () => {
 
     const userId = user?.user?._id || user?._id
 
+    if (loading) {
+        return <div className="min-h-[94vh] bg-[#0d0d0d] flex items-center justify-center" >
+            <LoadingBar />
+        </div>
+    }
     return (
         <div className="min-h-[94vh] bg-[#0d0d0d] text-white p-6">
 
@@ -65,7 +71,7 @@ const Team = () => {
 
             {/* Teams Grid */}
             {loading ? (
-                <p className="text-gray-400 text-center mt-20">Loading teams...</p>
+                <p className="text-gray-400 animate-pulse text-center mt-20">Loading teams...</p>
             ) :
                 teams.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

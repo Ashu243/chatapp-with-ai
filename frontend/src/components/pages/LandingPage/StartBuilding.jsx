@@ -3,7 +3,7 @@ import React from "react";
 const StartBuilding = () => {
   return (
     <section className="w-full flex items-center justify-center 
-                        py-46 px-6 bg-[#0c0c0c]">
+                        py-66 px-6 bg-[#0c0c0c]">
 
       <div className="flex flex-col items-center gap-4 text-center max-w-3xl">
 

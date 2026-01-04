@@ -2,32 +2,39 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axiosClient from "../../config/axios";
 import LeftPane from "./LeftPane";
-import RightPane from "./RightPane";
 import InitializeSocket, { joinProjectRoom, leaveProjectRoom, receive_message, send_message } from "../../config/socket";
 import TeamInfoBar from "../Team/TeamInfoBar";
 import TeamSocketProvider from "../../context/TeamSocketProvider";
-import ToggleTeamBarButton from "../ToggleTeamBarButton";
+import ToggleTeamBarButton from "../Team/ToggleTeamBarButton";
+import LoadingBar from "../common/LoadingBar";
+import { toast } from "react-toastify";
 
 const Project = () => {
     const { projectId } = useParams();
-    // const [UserMessages, setUserMessages] = useState([]);
-    // const [AiMessages, setAiMessages] = useState([]);
     const [project, setProject] = useState(null);
+    const [loading, setLoading] = useState(false)
     const [aiTyping, setaiTyping] = useState(false)
     const [cursor, setCursor] = useState()
     const [hasMoreMessage, setHasMoreMessage] = useState(true)
     const [messages, setMessages] = useState([])
 
-      const [isTeamBarOpen ,setIsTeamBarOpen] = useState(false)
+    const [isTeamBarOpen, setIsTeamBarOpen] = useState(false)
+
+    // console.log(isOnline)
+    
+
 
 
     async function getProject() {
         try {
+            setLoading(true)
             const res = await axiosClient.get(`/api/projects/get/${projectId}`,);
             setProject(res.data.data);
-            console.log(res.data.data)
+            // console.log(res.data.data)
+            setLoading(false)
         } catch (error) {
             console.log(error);
+            setLoading(false)
         }
     }
 
@@ -44,14 +51,9 @@ const Project = () => {
             }
             setMessages((prev) => {
                 const updated = [...data, ...prev]
-                console.log("Project messages after API:", updated)
+                // console.log("Project messages after API:", updated)
                 return updated
             })
-
-            // console.log('messages', data)
-
-            //    setUserMessages(data.filter((m)=> m.senderType === 'user'))
-            //    setAiMessages(data.filter((m)=> m.senderType === 'ai'))
 
             setCursor(data[0].createdAt)
 
@@ -66,15 +68,10 @@ const Project = () => {
         joinProjectRoom(projectId)
 
         receive_message('project-message', (data) => {
-            // if (data.senderId._id === 'ai') {
-            //     // console.log(JSON.parse(data.message))
-            //     setAiMessages((prev) => [...prev, data])
-            //     return
-            // }
             setMessages((prev) => [...prev, data])
         })
 
-        
+
 
         receive_message('ai-typing', (status) => {
             setaiTyping(status)
@@ -92,48 +89,51 @@ const Project = () => {
         getMessages()
     }, [projectId]);
 
-    // let UserMessages;
-    // let AiMessages;
-    // useEffect(() => {
-    //      setUserMessages(messages.filter((m)=> m.senderType === 'user'))
-    //      setAiMessages(messages.filter((m)=> m.senderType === 'ai'))
-    // }, [messages])
 
-    if(!project){
-        return <div>Loading</div>
-    }
+ if (loading) {
+  return (
+    <div className="h-[94vh] w-full flex items-center justify-center bg-[#0d0d0d] text-white">
+        <LoadingBar />
+    </div>
+  );
+}
+
+if (!project) {
+  return (
+    <div className="h-[94vh] w-full flex items-center justify-center bg-[#0d0d0d] text-gray-400">
+      Project not found
+    </div>
+  );
+}
 
     return (
-        
+
         <TeamSocketProvider teamId={project.teamId} >
-            <ToggleTeamBarButton onClick={()=> setIsTeamBarOpen(true)} />
-        <div className="flex">
-                <TeamInfoBar isOpen={isTeamBarOpen} onClose={()=> setIsTeamBarOpen(false)} projectName={project ? project.projectName : 'loading...'} />
-            <div className="h-[94vh] w-full md:w-3/4 bg-[#0d0d0d] text-white flex flex-col">
+            <ToggleTeamBarButton onClick={() => setIsTeamBarOpen(true)} />
+            <div className="flex">
+                <TeamInfoBar isOpen={isTeamBarOpen} onClose={() => setIsTeamBarOpen(false)} projectName={project ? project.projectName : 'loading...'} />
+                <div className="h-[94vh] w-full md:w-3/4 bg-[#0d0d0d] text-white flex flex-col">
 
 
-                {/* TWO-PANE LAYOUT */}
-                <div className="flex flex-1 h-full overflow-hidden">
+                    {/* TWO-PANE LAYOUT */}
+                    <div className="flex flex-1 h-full overflow-hidden">
 
 
-                    {/* <RightPane 
-                        aiTyping={aiTyping} /> */}
+                        {/* LEFT SIDE — CHAT SECTION */}
+                        <LeftPane
+                            // userMessages={UserMessages}
+                            messages={messages}
+                            aiTyping={aiTyping}
+                            getMessages={getMessages}
+                            addMessage={(msg) => setMessages((prev) => [...prev, msg])}
+                            project={project} />
 
-                    {/* LEFT SIDE — CHAT SECTION */}
-                    <LeftPane
-                        // userMessages={UserMessages}
-                        messages={messages}
-                        aiTyping={aiTyping}
-                        getMessages={getMessages}
-                        addMessage={(msg) => setMessages((prev) => [...prev, msg])}
-                        project={project} />
+                    </div>
+
 
                 </div>
 
-
             </div>
-
-        </div>
         </TeamSocketProvider>
     );
 };

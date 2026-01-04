@@ -2,7 +2,7 @@ import React from "react";
 
 const Card = () => {
   return (
-    <section className="w-full flex justify-center py-4 px-6">
+    <section className="w-full flex justify-center py-10 px-6">
       <div className="w-full max-w-7xl">
 
         {/* Steps */}

@@ -13,6 +13,7 @@ const LeftPane = ({ aiTyping, addMessage, messages, getMessages }) => {
 
   const username = user?.user?.email || user?.email
   const name = username.split('@')
+  // console.log(user)
 
   let typingTimeout;
   const handleInput = () => {
@@ -53,7 +54,7 @@ const LeftPane = ({ aiTyping, addMessage, messages, getMessages }) => {
         chatRef.current.scrollTop =
           chatRef.current.scrollHeight - prevHeight
       })
-      console.log(prevHeight, 'new height: ', chatRef.current.scrollHeight)
+      // console.log(prevHeight, 'new height: ', chatRef.current.scrollHeight)
     }
 
   }
@@ -103,41 +104,41 @@ const LeftPane = ({ aiTyping, addMessage, messages, getMessages }) => {
               <div key={index} className="flex justify-start">
                 <div className="bg-[#111] border border-[#333] rounded-xl px-4 py-3 max-w-[75%]">
                   <p className="text-xs opacity-60 mb-1">AI</p>
-                  <Markdown 
-                            options={{
-                                overrides: {
-                                    h1: {
-                                        props: { className: "text-xl font-semibold mb-3 text-white" },
-                                    },
-                                    h2: {
-                                        props: { className: "text-lg font-semibold mb-2 text-white" },
-                                    },
-                                    p: {
-                                        props: { className: "text-sm leading-relaxed mb-3 text-gray-300" },
-                                    },
-                                    ul: {
-                                        props: { className: "list-disc ml-5 mb-3 text-gray-300" },
-                                    },
-                                    li: {
-                                        props: { className: "mb-1" },
-                                    },
-                                    pre: {
-                                        props: {
-                                            className:
-                                                "bg-[#0b0b0b] border border-[#222] rounded-xl p-4 overflow-x-auto my-4",
-                                        },
-                                    },
-                                    code: {
-                                        props: {
-                                            className:
-                                                "text-purple-400 text-sm font-mono whitespace-pre-wrap break-words",
-                                        },
-                                    },
-                                },
-                            }}
-                        >
-                            {msg.content}
-                        </Markdown>
+                  <Markdown
+                    options={{
+                      overrides: {
+                        h1: {
+                          props: { className: "text-xl font-semibold mb-3 text-white" },
+                        },
+                        h2: {
+                          props: { className: "text-lg font-semibold mb-2 text-white" },
+                        },
+                        p: {
+                          props: { className: "text-sm leading-relaxed mb-3 text-gray-300" },
+                        },
+                        ul: {
+                          props: { className: "list-disc ml-5 mb-3 text-gray-300" },
+                        },
+                        li: {
+                          props: { className: "mb-1" },
+                        },
+                        pre: {
+                          props: {
+                            className:
+                              "bg-[#0b0b0b] border border-[#222] rounded-xl p-4 overflow-x-auto my-4",
+                          },
+                        },
+                        code: {
+                          props: {
+                            className:
+                              "text-purple-400 text-sm font-mono whitespace-pre-wrap break-words",
+                          },
+                        },
+                      },
+                    }}
+                  >
+                    {msg.content}
+                  </Markdown>
                 </div>
               </div>
             )
@@ -159,9 +160,9 @@ const LeftPane = ({ aiTyping, addMessage, messages, getMessages }) => {
           )
         })}
         {aiTyping && (
-                        <div className="text-xs text-gray-400 italic px-4 mb-2">
-                            AI is typing<span className="animate-pulse">...</span>
-                        </div>
+          <div className="text-xs text-gray-400 italic px-4 mb-2">
+            AI is typing<span className="animate-pulse">...</span>
+          </div>
         )}
         {typingIndicator && (
           <div className="text-xs text-gray-400 italic px-4 mb-2">
@@ -172,7 +173,10 @@ const LeftPane = ({ aiTyping, addMessage, messages, getMessages }) => {
       </div>
 
       {/* CHAT INPUT (fixed at bottom of LeftPane) */}
-      <form onSubmit={(e) => { e.preventDefault(); send() }} className="p-4 border-t border-[#222] bg-[#0b0b0b]">
+      <form onSubmit={(e) => { e.preventDefault(); send() }} className="px-4 py-3 border-t border-[#222] bg-[#0b0b0b]">
+      <p className="text-xs px-2 text-gray-400 mb-1">
+        Tip: Type <span className="text-purple-400 text-[14px]">@ai</span> to use the AI assistant
+      </p>
         <div className="flex gap-2">
           <input value={message} onInput={handleInput} onChange={(e) => setMessage(e.target.value)} type="text" placeholder="Type a message..." className="flex-1 bg-[#111] px-4 py-3 rounded-xl border border-[#333] outline-none focus:border-purple-600" />
           <button type="submit" disabled={aiTyping} className="bg-purple-600 hover:bg-purple-700 px-5 py-3 rounded-xl font-medium">Send</button>

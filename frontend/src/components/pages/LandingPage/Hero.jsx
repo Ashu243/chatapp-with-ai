@@ -36,7 +36,7 @@ const Hero = () => {
             </button>
             <button className="bg-gray-800 hover:bg-gray-700
                                text-lg rounded-full px-10 py-3">
-              View on GitHub
+             <a target="_blank" href='https://github.com/Ashu243/chatapp-with-ai' >View on GitHub</a> 
             </button>
           </div>
         </div>
