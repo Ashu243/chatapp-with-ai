@@ -2,6 +2,7 @@ import React, { useContext, useState, useRef, useEffect } from 'react'
 import InitializeSocket, { receive_message, send_message } from '../../config/socket'
 import { authContext } from '../../context/AuthProvider'
 import Markdown from "markdown-to-jsx";
+import { toast } from 'react-toastify';
 
 const LeftPane = ({ aiTyping, addMessage, messages, getMessages }) => {
   const { user } = useContext(authContext)
@@ -15,6 +16,8 @@ const LeftPane = ({ aiTyping, addMessage, messages, getMessages }) => {
   const username = user?.user?.email || user?.email
   const name = username.split('@')
   // console.log(user)
+
+  const isOnline = navigator.onLine
 
   let typingTimeout;
   const handleInput = () => {
@@ -66,6 +69,11 @@ const LeftPane = ({ aiTyping, addMessage, messages, getMessages }) => {
 
   function send() {
     if (!message.trim()) return
+
+    if(!isOnline){
+      toast.error('No Internet Connection')
+      return
+    }
 
     setScroll(true)
 
