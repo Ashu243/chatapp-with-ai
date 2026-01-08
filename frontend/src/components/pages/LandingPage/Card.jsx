@@ -73,9 +73,9 @@ const Card = () => {
             </h3>
 
             <p className="text-gray-400 text-base sm:text-lg leading-relaxed">
-              Mention{" "}
-              <span className="text-white bg-zinc-800 px-2 py-1 rounded-md text-sm">
-                @ai
+              Turn on{" "}
+              <span className="text-white bg-green-700 px-2 py-1 rounded-md text-sm">
+                AI
               </span>{" "}
               in chat to get instant explanations, ideas, and technical help.
             </p>

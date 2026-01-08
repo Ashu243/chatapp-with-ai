@@ -33,7 +33,7 @@ const Hero = () => {
       <div
         ref={containerRef}
         className="min-h-screen main flex flex-col lg:flex-row items-center justify-center
-                   -pt-30 gap-12 lg:gap-20 px-6 lg:px-16"
+                    md:-pt-30 gap-12 lg:gap-20 px-6 lg:px-16"
       >
         <div className="heading max-w-xl text-center lg:text-left">
           <h1 className="hero-item text-5xl sm:text-6xl lg:text-8xl">Chat.</h1>
