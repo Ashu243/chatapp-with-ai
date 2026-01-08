@@ -4,6 +4,7 @@ import axiosClient from '../../../config/axios'
 import { Link, useNavigate } from 'react-router-dom'
 import { useContext } from 'react'
 import { authContext } from '../../../context/AuthProvider'
+import LoadingBar from '../../common/LoadingBar.jsx'
 
 const Login = () => {
 
@@ -11,6 +12,7 @@ const Login = () => {
     const [password, setPassword] = useState('')
     const navigate = useNavigate()
     const { setUser, user } = useContext(authContext)
+    const [loading, setLoading] = useState(false)
 
     useEffect(() => {
         if (user) {
@@ -21,10 +23,12 @@ const Login = () => {
     async function handleDemoAccount(e) {
         try {
             e.preventDefault()
+            setLoading(true)
             const res = await axiosClient.post('/api/users/login', { email: 'demo@example.com', password: 'demopassword' }, { show: true })
 
             setUser(res.data.data)
             navigate('/team')
+            setLoading(false)
         } catch (error) {
             console.log(error.response?.data?.message || "something went wrong")
         }
@@ -33,13 +37,21 @@ const Login = () => {
     async function handleSubmit(e) {
         try {
             e.preventDefault()
+            setLoading(true)
             const res = await axiosClient.post('/api/users/login', { email, password }, { show: true })
             // console.log(res.data.data.user)
             setUser(res.data.data.user)
             navigate('/team')
+            setLoading(false)
         } catch (error) {
             console.log(error.response?.data?.message || "something went wrong")
         }
+    }
+
+    if(loading){
+        return <div className='min-h-[94vh] flex items-center justify-center bg-[#0c0c0c]' >
+            <LoadingBar />
+        </div>
     }
 
 
