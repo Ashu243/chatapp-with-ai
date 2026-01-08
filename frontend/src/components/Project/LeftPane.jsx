@@ -180,17 +180,51 @@ const LeftPane = ({ aiTyping, addMessage, messages, getMessages }) => {
       </div>
 
       {/* CHAT INPUT (fixed at bottom of LeftPane) */}
-      <form onSubmit={(e) => { e.preventDefault(); send() }} className="px-4 py-3 border-t border-[#222] bg-[#0b0b0b]">
-        <div className="flex gap-2 items-center">
-      <div 
+     <form
+  onSubmit={(e) => {
+    e.preventDefault()
+    send()
+  }}
+  className="px-3 sm:px-4 py-2 sm:py-3 border-t border-[#222] bg-[#0b0b0b]"
+>
+  <div className="flex items-center gap-2 sm:gap-3">
+    
+    {/* AI Button */}
+    <div
       onClick={handleAiMode}
-      className={`text-xs h-10 w-10 flex items-center justify-center cursor-pointer rounded-full ${aiMode? "bg-green-700 animate-pulse": "bg-gray-800"}`}>
-       <span className="text-white text-[14px]">AI</span> 
-      </div>
-          <input value={message} onInput={handleInput} onChange={(e) => setMessage(e.target.value)} type="text" placeholder={`${aiMode? "type a message to AI...": "type a message..."}`} className={`flex-1 bg-[#111] px-4 py-3 rounded-xl border border-[#333] outline-none ${aiMode? " focus:border-green-600": " focus:border-purple-600" }`} />
-          <button type="submit" disabled={aiTyping} className="bg-purple-600 hover:bg-purple-700 px-5 py-3 rounded-xl font-medium">Send</button>
-        </div>
-      </form>
+      className={`h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center cursor-pointer rounded-full active:scale-95 transition
+        ${aiMode ? "bg-green-700 animate-pulse" : "bg-gray-800"}
+      `}
+    >
+      <span className="text-white text-[11px] sm:text-[14px]">AI</span>
+    </div>
+
+    {/* Input */}
+    <input
+      value={message}
+      onInput={handleInput}
+      onChange={(e) => setMessage(e.target.value)}
+      type="text"
+      placeholder={aiMode ? "type a message to AI..." : "type a message..."}
+      className={`flex-1 bg-[#111] px-2 sm:px-4 py-2 sm:py-3 rounded-xl border border-[#333] outline-none transition
+        ${aiMode ? "focus:border-green-600" : "focus:border-purple-600"}
+      `}
+    />
+
+    {/* Send Button */}
+    <button
+      type="submit"
+      disabled={aiTyping}
+      className="bg-purple-600 hover:bg-purple-700 active:scale-95 transition
+        px-3 md:px-5 py-2 sm:py-3 text-xs md:text-[14px]
+        rounded-xl font-medium disabled:opacity-60"
+    >
+      →
+    </button>
+
+  </div>
+</form>
+
     </div>
   )
 }
