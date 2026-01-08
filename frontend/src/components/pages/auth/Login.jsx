@@ -30,6 +30,7 @@ const Login = () => {
             navigate('/team')
             setLoading(false)
         } catch (error) {
+            setLoading(false)
             console.log(error.response?.data?.message || "something went wrong")
         }
     }
@@ -44,6 +45,7 @@ const Login = () => {
             navigate('/team')
             setLoading(false)
         } catch (error) {
+            setLoading(false)
             console.log(error.response?.data?.message || "something went wrong")
         }
     }
