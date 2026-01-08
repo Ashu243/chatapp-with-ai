@@ -18,6 +18,7 @@ const Card = () => {
         y:30,
         duration: .5,
         stagger: .1,
+        delay: .2,
         scale: 1.05,
         scrollTrigger: {
           trigger: '.card-item',

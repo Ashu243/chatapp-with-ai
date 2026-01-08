@@ -17,6 +17,7 @@ const Footer = () => {
                 opacity: 0,
                 // y: 30,
                 stagger: 0.1,
+                delay: .2,
                 duration: 0.5,
                 ease: "power2.out",
                 scale: 1.05,
