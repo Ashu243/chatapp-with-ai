@@ -10,6 +10,7 @@ const LeftPane = ({ aiTyping, addMessage, messages, getMessages }) => {
   const chatRef = useRef()
   const [scroll, setScroll] = useState(true)
   const [typingIndicator, setTypingIndicator] = useState(null)
+  const [aiMode, setAiMode] = useState(false)
 
   const username = user?.user?.email || user?.email
   const name = username.split('@')
@@ -59,13 +60,19 @@ const LeftPane = ({ aiTyping, addMessage, messages, getMessages }) => {
 
   }
 
+  function handleAiMode(){
+    setAiMode(aiMode? false: true)
+  }
+
   function send() {
     if (!message.trim()) return
 
     setScroll(true)
 
+    const finalmessage = aiMode? `@ai ${message}`: message
+
     const SenderMessage = {
-      content: message,
+      content: finalmessage,
       senderId: user,
 
     }
@@ -174,11 +181,13 @@ const LeftPane = ({ aiTyping, addMessage, messages, getMessages }) => {
 
       {/* CHAT INPUT (fixed at bottom of LeftPane) */}
       <form onSubmit={(e) => { e.preventDefault(); send() }} className="px-4 py-3 border-t border-[#222] bg-[#0b0b0b]">
-      <p className="text-xs px-2 text-gray-400 mb-1">
-        Tip: Type <span className="text-purple-400 text-[14px]">@ai</span> to use the AI assistant
-      </p>
-        <div className="flex gap-2">
-          <input value={message} onInput={handleInput} onChange={(e) => setMessage(e.target.value)} type="text" placeholder="Type a message..." className="flex-1 bg-[#111] px-4 py-3 rounded-xl border border-[#333] outline-none focus:border-purple-600" />
+        <div className="flex gap-2 items-center">
+      <div 
+      onClick={handleAiMode}
+      className={`text-xs h-10 w-10 flex items-center justify-center cursor-pointer rounded-full ${aiMode? "bg-green-700 animate-pulse": "bg-gray-800"}`}>
+       <span className="text-white text-[14px]">AI</span> 
+      </div>
+          <input value={message} onInput={handleInput} onChange={(e) => setMessage(e.target.value)} type="text" placeholder={`${aiMode? "type a message to AI...": "type a message..."}`} className={`flex-1 bg-[#111] px-4 py-3 rounded-xl border border-[#333] outline-none ${aiMode? " focus:border-green-600": " focus:border-purple-600" }`} />
           <button type="submit" disabled={aiTyping} className="bg-purple-600 hover:bg-purple-700 px-5 py-3 rounded-xl font-medium">Send</button>
         </div>
       </form>

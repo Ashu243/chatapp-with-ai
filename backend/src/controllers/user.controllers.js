@@ -61,7 +61,7 @@ const Login = asynchandler(async function (req, res) {
 
     const key = `${email}:${req.ip}` // example -> john@example.com:192.168.1.10
     try {
-        // rate limiting per user. --> key is email and ip. because if a hacker target one email and hit the rate limit then a legit user tries to login then it will not login
+        // rate limiting per user. --> key is email and ip. because if a hacker target one email and hit the rate limit then a legit user tries to login then it can login by the legit user as ip will be different
         await loginRateLimiter.consume(key)
     } catch (error) {
         throw new ApiError(429, 'Too many login attempts. Please try again later.')
