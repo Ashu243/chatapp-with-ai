@@ -48,7 +48,7 @@ const Hero = () => {
           </p>
 
           <div className="mt-6 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-             <Link to="/login"><button className="hero-item bg-purple-600 hover:bg-purple-700 text-lg rounded-full px-10 py-3">
+             <Link to="/login"><button className="hero-item bg-purple-600 hover:bg-purple-700 text-lg rounded-full px-20 py-3">
              Get Started
             </button></Link>
               <a
@@ -56,7 +56,7 @@ const Hero = () => {
                 rel="noreferrer"
                 href="https://github.com/Ashu243/chatapp-with-ai"
               >
-            <button className="hero-item bg-gray-800 hover:bg-gray-700 text-lg rounded-full px-10 py-3">
+            <button className="hero-item bg-gray-800 hover:bg-gray-700 text-lg rounded-full px-16 py-3">
                 View on GitHub
             </button>
               </a>
