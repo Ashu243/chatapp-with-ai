@@ -5,6 +5,7 @@ import asynchandler from "../utils/asyncHandler.js";
 import redis from "../services/redis.services.js";
 import { loginRateLimiter } from "../rateLimiters/loginRateLimiter.js";
 import jwt from 'jsonwebtoken'
+import ms from 'ms'
 
 
 const generateAccessAndRefreshToken = async function (user) {
@@ -83,17 +84,26 @@ const Login = asynchandler(async function (req, res) {
     // if the login is success then delete the key otherwise the limit will not reset.
     await loginRateLimiter.delete(key)
 
-    const options = {
+      const accessTokenOptions = {
         httpOnly: true,
-        secure: true,
+        secure: process.env.NODE_ENV === "production",
         sameSite: "none",
-        path: "/"
+        path: "/",
+        maxAge: ms(process.env.ACCESS_TOKEN_EXPIRY)
+    };
+
+    const refreshTokenOptions = {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "none",
+        path: "/",
+        maxAge: ms(process.env.REFRESH_TOKEN_EXPIRY)
     };
 
     return res
         .status(200)
-        .cookie("accessToken", accessToken, options)
-        .cookie("refreshToken", refreshToken, options)
+        .cookie("accessToken", accessToken, accessTokenOptions)
+        .cookie("refreshToken", refreshToken, refreshTokenOptions)
         .json(
             new ApiResponse(200, { user: loggedInUser, accessToken, refreshToken }, "user loggedin successfully")
         )
@@ -171,17 +181,26 @@ const refreshAccessToken = asynchandler(async function (req, res) {
     // generating both the token using enerateAccessAndRefreshToken function which also sets the refresh token in redis
     const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user)
 
-    const options = {
+    const accessTokenOptions = {
         httpOnly: true,
-        secure: true,
+        secure: process.env.NODE_ENV === "production",
         sameSite: "none",
-        path: "/"
+        path: "/",
+        maxAge: ms(process.env.ACCESS_TOKEN_EXPIRY)
+    };
+
+    const refreshTokenOptions = {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "none",
+        path: "/",
+        maxAge: ms(process.env.REFRESH_TOKEN_EXPIRY)
     };
 
     return res
         .status(200)
-        .cookie("accessToken", accessToken, options)
-        .cookie("refreshToken", refreshToken, options)
+        .cookie("accessToken", accessToken, accessTokenOptions)
+        .cookie("refreshToken", refreshToken, refreshTokenOptions)
         .json(
             new ApiResponse(200, {}, "refreshed access token successfully")
         )
@@ -196,7 +215,7 @@ const LogoutUser = asynchandler(async function (req, res) {
 
     const options = {
         httpOnly: true,
-        secure: true,
+        secure: process.env.NODE_ENV === "production",
         sameSite: "none",
         path: "/"
     };
